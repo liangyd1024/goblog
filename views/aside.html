@@ -1,0 +1,42 @@
+<aside class="col-md-4">
+    <div class="widget widget-recent-posts">
+        <h3 class="widget-title">推荐文章</h3>
+        <ul>
+            <li v-for="articles in articlesRecommendList">
+                <a v-bind:href="todetails(articles.id)">{{articles.title}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="widget widget-archives">
+        <h3 class="widget-title">归档</h3>
+        <ul>
+            <li v-for="palceoffile in palceoffiles">
+                <a href="javascript:void(0)" @click="tosearch('placeoffile',0,palceoffile.type)">
+                    {{palceoffile.type}}
+                    <span class="post-count">({{palceoffile.total}})</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="widget widget-category">
+        <h3 class="widget-title">分类</h3>
+        <ul>
+            <li v-for="category in categorys">
+                <a href="javascript:void(0)" @click="tosearch('category',category.id)">{{category.categoryName}} <span class="post-count">({{category.articlesNum}})</span></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="widget widget-tag-cloud">
+        <h3 class="widget-title">标签云</h3>
+        <ul>
+            <li v-for="tag in tags">
+                <a href="javascript:void(0)" @click="tosearch('tag',tag.id)">{{tag.tagName}} <span class="post-count">({{tag.articlesNum}})</span></a>
+            </li>
+        </ul>
+    </div>
+    <div class="rss">
+        <a href="#"><span class="ion-social-rss-outline"></span> RSS 订阅</a>
+    </div>
+</aside>

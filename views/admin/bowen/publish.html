@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <<<template "taglib.html">>>
+    <title>写文章</title>
+    <link href="/static/css/hplus/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="/static/css/hplus/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="/static/css/editormd/editormd.css" rel="stylesheet">
+
+    <script src="/static/js/frame/hplus/plugins/summernote/summernote.min.js"></script>
+    <script src="/static/js/frame/hplus/plugins/summernote/summernote-zh-CN.js"></script>
+    <script src="/static/js/frame/editormd/editormd.js"></script>
+
+    <style>
+
+        .dropdown-menu > li > span {
+            display: block;
+            padding: 8px 10px;
+            margin: 3px;
+        }
+
+        .dropdown-menu > li > span > a {
+            color: #1eacae;
+        }
+
+        .dropdown-menu > li > span:focus, .dropdown-menu > li > span:hover {
+            color: #262626;
+            text-decoration: none;
+            background-color: #f5f5f5
+        }
+
+    </style>
+
+</head>
+
+<body >
+<div id="app" class="wrapper wrapper-content">
+
+    <!--  博文标题  -->
+    <div class="ibox-content">
+        <div class="form-group">
+            <label class="col-md-1 control-label">
+                <button @click="back" class="btn btn-white">返回</button>
+            </label>
+            <label class="col-md-1 control-label">
+                <a class="btn btn-primary">博文标题</a>
+            </label>
+            <div class="col-md-8">
+                <div class="m-b">
+
+                    <input type="text" class="form-control" placeholder="输入文章标题" v-model="articles.title" />
+                    <input type="hidden"  id="id" value="<<<.id>>>" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  博文简介  -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        博文描述编辑
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="ibox-content" id="desc">
+
+                            <div id="desc_edit" class="wrapper" v-html="articles.desc"></div>
+
+                        </div>
+
+                    </div>
+                    <div class="panel-footer">
+                        <button id="edit" class="btn btn-primary btn-xs m-l-sm" @click="edit('desc')" type="button">编辑</button>
+                        <button id="save" class="btn btn-primary  btn-xs" @click="save('desc')" type="button">预览</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  博文详情  -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-12">
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        正文编辑
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                            <li v-bind:class="{active:editorType.markdownActive}"><a data-toggle="tab" @click="selecteditor(editorType.md)" href="#tab-1" aria-expanded="true">Markdown编辑</a>
+                            </li>
+                            <li v-bind:class="{active:editorType.richActive}"><a data-toggle="tab" @click="selecteditor(editorType.rich)" href="#tab-2" aria-expanded="false">富文本编辑</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="tab-1" class="tab-pane" v-bind:class="{active:editorType.markdownActive}">
+                                <div class="panel-body">
+                                    <!--  Markdown编辑器  -->
+                                    <div id="content_markdown">
+                                        <textarea></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-2" class="tab-pane" v-bind:class="{active:editorType.richActive}">
+                                <div class="panel-body">
+                                    <!--  富文本编辑器  -->
+                                    <div id="content_edit" class="wrapper" v-html="articles.articlesDetails.content"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-footer">
+                        <button id="edit" class="btn btn-primary btn-xs m-l-sm" @click="edit('content')" type="button">编辑</button>
+                        <button id="save" class="btn btn-primary  btn-xs" @click="save('content')" type="button">预览</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--  标签 栏目 发布按钮  -->
+    <div class="row" style="margin-top: 100px">
+        <div class="col-sm-12">
+            <div class="ibox-content">
+                <form class="form-horizontal" onsubmit="return false">
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">文章标签：</label>
+                        <div class="col-sm-8 input-group">
+                            <span class="col-sm-4">
+                                <input type="text" id="tagNameTip" class="form-control" placeholder="新标签" style="width: 100px" v-model="tag.tagName">
+                                <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">分类 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li v-for="tag in tags">
+                                        <span @click="selecttag(tag,true)">
+                                            <a>{{tag.tagName}}</a>
+                                            <a class="pull-right" @click.stop="deletetag(tag)">删除</a>
+                                        </span>
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn btn-outline btn-primary" @click="addtag()">添加标签</button>
+                            </span>
+                            <span class="col-sm-8" style="margin-top: 6px">
+                                <span v-for="tag in articles.tags">
+                                    <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle">{{tag.tagName}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a @click="deletearticlestag(tag)">删除</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                                <span v-for="tag in newTags">
+                                    <button data-toggle="dropdown" class="btn btn-danger btn-xs dropdown-toggle">{{tag.tagName}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a @click="deletenewtag(tag)">删除</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">所属栏目：</label>
+                        <div class="col-sm-8 input-group">
+                            <span class="col-sm-4">
+                                <input type="text" id="categoryNameTip"  class="form-control" placeholder="新栏目" style="width: 100px" v-model="category.categoryName">
+                                <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">栏目 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li v-for="category in categorys">
+                                        <span @click.self="selectcategory(category,true)">
+                                            <a>{{category.categoryName}}</a>
+                                            <a class="pull-right" @click.stop="deletecategory(category)">删除</a>
+                                        </span>
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn btn-outline btn-primary" @click="addcategory()">添加栏目</button>
+                            </span>
+                            <span class="col-sm-8" style="margin-top: 6px">
+                                <span v-for="category in articles.categorys">
+                                    <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle">{{category.categoryName}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a @click="deletearticlescategory(category)">删除</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                                <span v-for="(category) in newCategorys">
+                                    <button data-toggle="dropdown" class="btn btn-danger btn-xs dropdown-toggle">{{category.categoryName}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a @click="deletenewcategory(category)">删除</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">文章类型：</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button v-if="articles.type == ''" data-toggle="dropdown" class="btn btn-white dropdown-toggle">选择分类 <span class="caret"></span>
+                                    </button>
+                                    <button v-else data-toggle="dropdown" class="btn btn-white dropdown-toggle">{{typeMap[articles.type]}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li  v-for="type in types"><a @click="selecttype(type)">{{type.desc}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group ">
+                        <label class="col-sm-4 control-label"></label>
+                        <p class="col-sm-6">
+                            <button v-if="!modifyFlag" data-toggle="modal" data-target="#publishModal" data-original-title="发布" class="btn btn-w-m btn-primary" >发布博客</button>
+                            <button v-if="!modifyFlag" class="btn btn-w-m btn-warning" @click="publish('INIT')">放入草稿箱</button>
+                            <button v-if="modifyFlag" data-toggle="modal" data-target="#modifyModal" data-original-title="修改"  class="btn btn-w-m btn-primary" >保存修改</button>
+                            <button @click="back" class="btn btn-w-m btn-default">返回</button>
+                        </p>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <small-modal id="publishModal" title="温馨提示" content="确认发布？" @click-event="publish('PUBLISH')"></small-modal>
+    <small-modal id="modifyModal" title="温馨提示" content="确认修改？" @click-event="modifybowen"></small-modal>
+
+</div>
+
+
+<script src="/static/js/admin/bowen/bowen_publish.js"></script>
+
+</body>
+</html>

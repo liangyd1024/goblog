@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <<<template "taglib.html">>>
+    <link href="/static/css/hplus/login.css" rel="stylesheet">
+    <script>
+        if(window.top!==window.self){window.top.location=window.location}
+    </script>
+
+</head>
+<body class="signin">
+    <div id="app" class="signinpanel">
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="signin-info">
+                    <div class="logopanel m-b">
+                        <h1>[ <<< appName >>> ]</h1>
+                    </div>
+                    <div class="m-b"></div>
+                    <h4>欢迎使用 <strong><<< appName >>>后台管理</strong></h4>
+                    <ul class="m-b">
+                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 基于Golang</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 基于Beego</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 基于Vue</li>
+                    </ul>
+                    <strong>还没有账号？ <a href="#">立即注册&raquo;</a></strong>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <form onsubmit="return false">
+                    <h4 class="no-margins"><<< appName >>></h4>
+                    <p class="m-t-md">登录</p>
+                    <input id="userName" type="text" class="form-control uname" v-model="user.userName" placeholder="用户名" />
+                    <input id="userPwd" type="password" class="form-control pword" v-model="user.userPwd" placeholder="密码"/>
+                    <input id="captcha" type="text" class="form-control pword m-b" v-model="user.captcha" maxlength="4" placeholder="验证码" />
+                    <div class="m-b" ><a title="刷新" @click="captcha()" ><img class="check" style="width: 100%;height: 100%" v-bind:src="image"/></a></div>
+                    <div class="clearfix"></div>
+                    <a href="#">忘记密码了？</a>
+                    <button @click="login" class="btn btn-success btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy; 2018 All Rights Reserved. <<< appName >>>
+            </div>
+        </div>
+</div>
+
+<script src="/static/js/admin/user/login.js"></script>
+
+</body>
+</html>

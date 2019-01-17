@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <<<template "taglib.html">>>
+    <title>博文详情</title>
+    <link href="/static/css/editormd/editormd.css" rel="stylesheet">
+
+    <script src="/static/js/frame/editormd/lib/marked.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/prettify.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/raphael.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/underscore.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/sequence-diagram.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/flowchart.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/jquery.flowchart.min.js"></script>
+    <script src="/static/js/frame/editormd/editormd.js"></script>
+</head>
+
+<body class="gray-bg">
+<div id="app" class="wrapper wrapper-content  animated fadeInRight article">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div >
+                <div class="ibox-content">
+                    <input type="hidden" id="id" value="<<<.id>>>" />
+                    <div class="pull-left">
+                        <label>标签:</label>
+                        <button v-for="tag in articles.tags" class="btn btn-white btn-xs" type="button">{{tag.tagName}}</button>
+                    </div>
+                    <div class="pull-right">
+                        <label>栏目:</label>
+                        <button v-for="category in articles.categorys" class="btn btn-white btn-xs" type="button">{{category.categoryName}}</button>
+                    </div>
+                    <div class="text-center article-title">
+                        <h1>
+                            {{articles.title}}
+                        </h1>
+                        <h2 v-html="articles.desc">
+
+                        </h2>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <!--  富文本  -->
+                    <p v-if="articles.articlesDetails.editorType=='RICH'" v-html="articles.articlesDetails.content">
+
+                    </p>
+
+                    <!--  markdown  -->
+                    <div id="content_markdown" v-if="articles.articlesDetails.editorType=='MD'">
+                        <textarea style="display:none;">{{articles.articlesDetails.content}}</textarea>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <h2>评论：共 {{comment.paging.total}} 条评论</h2>
+                            <div class="social-feed-box" v-for="comment in commentList">
+                                <div class="social-avatar">
+                                    <a href="" class="pull-left">
+                                        <img alt="image" src="/static/img/hplus/p2.jpg">
+                                    </a>
+                                    <div class="media-body">
+                                        <a href="">
+                                            {{comment.commentator}}
+                                        </a>
+                                        <small class="text-muted">{{dateFormat(comment.commentTime)}}</small>
+                                    </div>
+                                </div>
+                                <div class="social-body">
+                                    <p>
+                                        {{comment.content}}
+                                    </p>
+                                </div>
+                                <!--  评论回复  -->
+                                <div style="margin-left: 50px;" class="social-avatar" v-for="replyComment in comment.replyCommentList">
+                                    <a href="" class="pull-left">
+                                        <img alt="image" src="/static/img/hplus/p3.jpg">
+                                    </a>
+                                    <div class="media-body">
+                                        <a href="">
+                                            {{replyComment.commentator}}
+                                        </a>
+                                        <small class="text-muted">{{dateFormat(replyComment.commentTime)}}</small>
+                                    </div>
+                                    <div class="social-body">
+                                        <p>
+                                            {{replyComment.content}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <h2 class="pull-right" style="margin-right: 12px;margin-top: 10px" v-if="comment.paging.pageNum < comment.paging.pages">
+                        <a @click="listcomment(comment.paging.pageNum+1)">更多</a>
+                    </h2>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="/static/js/admin/bowen/bowen_details.js"></script>
+
+</body>
+</html>

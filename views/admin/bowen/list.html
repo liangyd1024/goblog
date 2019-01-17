@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <<<template "taglib.html">>>
+    <title>博文列表</title>
+</head>
+
+<body class="gray-bg">
+
+<div id="app" class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content mailbox-content">
+                    <div class="file-manager">
+                        <a class="btn btn-block btn-primary compose-mail" v-bind:href="topublish()">写一篇</a>
+                        <div class="space-25"></div>
+                        <h5>文章管理</h5>
+                        <ul class="folder-list m-b-md" style="padding: 0">
+                            <li>
+                                <a @click="listbowen(1)"> <i class="fa fa-inbox "></i> 全部 <span
+                                        class="label label-warning pull-right">{{articlesPublishNum + articlesInitNum}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="listbowen(1,'PUBLISH')"> <i class="fa fa-envelope-o"></i> 已发表
+                                    <span class="label label-info pull-right">{{articlesPublishNum}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="listbowen(1,'INIT')"> <i class="fa fa-file-text-o"></i> 草稿箱
+                                    <span class="label label-danger pull-right">{{articlesInitNum}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="listbowen(1,'','ORIGINAL')"> <i class="fa fa-certificate"></i> 原创
+                                    <span class="label label-success pull-right">{{articlesOriginalNum}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="listbowen(1,'','REPRINT')"> <i class="fa fa-share"></i> 转载
+                                    <span class="label label-default pull-right">{{articlesReprintNum}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="listbowen(1,'','')"> <i class="fa fa-warning"></i> 其他
+                                    <span class="label label-inverse pull-right">{{articlesOtherNum}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <h5>分类</h5>
+                        <ul class="category-list" style="padding: 0">
+                            <li v-if="categorys==null||categorys.length==0">
+                                <a> <i class="fa fa-circle text-warning"></i> 暂无</a>
+                            </li>
+                            <li v-for="category in categorys">
+                                <a @click="listcategorybowen(category)">
+                                    <i class="fa fa-circle text-navy"></i> {{category.categoryName}}
+                                    ({{category.articlesNum}})
+                                </a>
+                            </li>
+                            <!--
+                            <li>
+                                <a href="mail_compose.html#"> <i class="fa fa-circle text-danger"></i> 文档</a>
+                            </li>
+                            <li>
+                                <a href="mail_compose.html#"> <i class="fa fa-circle text-primary"></i> 社交</a>
+                            </li>
+                            <li>
+                                <a href="mail_compose.html#"> <i class="fa fa-circle text-info"></i> 广告</a>
+                            </li>
+                            <li>
+                                <a href="mail_compose.html#"> <i class="fa fa-circle text-warning"></i> 客户端</a>
+                            </li>
+                            -->
+                        </ul>
+
+                        <h5 class="tag-title">标签云</h5>
+                        <ul class="tag-list" style="padding: 0">
+                            <li v-if="tags==null||tags.length==0">
+                                <a> <i class="fa fa-tag text-warning"></i> 暂无</a>
+                            </li>
+                            <li v-for="tag in tags">
+                                <a @click="listtagbowen(tag)"><i class="fa fa-tag"></i> {{tag.tagName}}
+                                    ({{tag.articlesNum}})
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <div class="pull-right mail-search">
+                    <div class="input-group">
+                        <input type="text" class="form-control input-sm" id="searchText" v-model="searchText" placeholder="搜索博文标题/正文等">
+                        <div class="input-group-btn">
+                            <button v-on:click="listbowen(1)" class="btn btn-sm btn-primary">
+                                搜索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <h2>
+                    博文列表 ({{bean.paging.total}})
+                </h2>
+
+                <!--
+                <div class="input-group">
+
+                    <input type="text" class="form-control pull-right" style="width: 100px">
+                    <div class="input-group-btn">
+                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">分类 <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="form_basic.html#">选项1</a>
+                            </li>
+                            <li><a href="form_basic.html#">选项2</a>
+                            </li>
+                            <li><a href="form_basic.html#">选项3</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="form_basic.html#">选项4</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                -->
+
+                <div class="mail-tools tooltip-demo m-t-md">
+                    <div class="btn-group pull-right">
+                        <button class="btn btn-white btn-sm" title="上一页" v-on:click="listbowen(bean.paging.pageNum-1)"><i class="fa fa-arrow-left"></i>
+                        </button>
+                        <button class="btn btn-white btn-sm" title="下一页" v-on:click="listbowen(bean.paging.pageNum+1)"><i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <i class="fa fa-circle text-navy"></i> 当前页: {{bean.paging.pageNum}}
+                    <i class="fa fa-circle text-navy"></i> 页数: {{bean.paging.pages}}
+
+                </div>
+
+                <div v-for="articles in articlesList" class="mail-tools tooltip-demo m-t-md" style="background-color: #F3F3F4;padding: 5px 8px">
+                    <h4>
+                        <span v-if="articles.status == 'INIT'" class="badge badge-danger">草稿</span>
+                        <span class="font-noraml">{{articles.title}}</span>
+                        <span class="pull-right">{{types[articles.type]}}</span>
+                    </h4>
+                    <div class="mail-body" >
+                        <p v-html="articles.desc"></p>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div  style="margin-bottom: 30px">
+                        <div class="col-sm-4" >
+                            <label>发布人：{{articles.publisher}}</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>发布时间：{{dateFormat(articles.publishTime)}}</label>
+                        </div>
+                        <div class="col-sm-4" >
+                            <span title="评论" class="font-noraml col-sm-4"><i class="fa fa-commenting"></i> {{articles.commentNum}}</span>
+                            <span title="点赞" class="font-noraml col-sm-4"><i class="fa fa-thumbs-up"></i> {{articles.praiseNum}}</span>
+                            <span title="浏览" class="font-noraml col-sm-4"><i class="fa fa-eye"></i> {{articles.browseNum}}</span>
+                        </div>
+                    </div>
+
+                    <div class="mail-body" style="margin-bottom: 25px">
+                        <div class="col-sm-8" style="margin-top: 5px">
+                            <div class="col-sm-6" >
+                                <label>标签:</label>
+                                <span v-if="articles.tags.length>0" v-for="tag in articles.tags" class="badge badge-info">{{tag.tagName}}</span>
+                                <span v-if="articles.tags.length==0" class="badge badge-warning">暂无</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>栏目:</label>
+                                <span  v-if="articles.categorys.length>0" v-for="category in articles.categorys" class="badge badge-success">{{category.categoryName}}</span>
+                                <span  v-if="articles.categorys.length==0" class="badge badge-warning">暂无</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <span v-if="articles.status == 'INIT'">
+                                <button data-toggle="modal" data-target="#publishModal" data-original-title="发布"
+                                        class="btn btn-sm btn-white" @click="assign(articles)"><i class="fa fa-check"></i> 发布</button>
+                            </span>
+                            <span>
+                                <a class="btn btn-sm btn-white" v-bind:href="tomodify(articles.id)"><i class="fa fa-edit"></i> 编辑</a>
+                            </span>
+                            <span>
+                                <a class="btn btn-sm btn-white" v-bind:href="todetails(articles.id)"><i class="fa fa-comment"></i> 详情</a>
+                            </span>
+                            <span>
+                                <button data-toggle="modal" data-target="#deleteModal" data-original-title="删除"
+                                    class="btn btn-sm btn-white" v-on:click="assign(articles)"><i class="fa fa-trash"></i> 删 除</button>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div v-if="articlesList == null || articlesList.length==0" class="ibox-content m-b-sm border-bottom">
+                    <div class="text-center p-lg">
+                        <h2>如果没有找到您需要的博文</h2>
+                        <span>您可以点击</span>
+                        <a v-bind:href="topublish()" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <span class="bold">发表博文</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <small-modal id="deleteModal" title="温馨提示" content="确认删除？" @click-event="deletebowen"></small-modal>
+        <small-modal id="publishModal" title="温馨提示" content="确认发布？" @click-event="publishbowen"></small-modal>
+
+    </div>
+</div>
+
+
+<script>
+
+    layer.tips('输入内容进行快速搜索', '#searchText', {
+        tips: [1, '#asdsde'],
+        time: 4000
+    });
+
+    // var index = parent.layer.load(1000, {shade: [0.5,'#eee'],time: 2*1000});
+
+</script>
+
+
+<script src="/static/js/admin/bowen/bowen_list.js"></script>
+
+
+
+</body>
+
+</html>

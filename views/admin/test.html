@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台测试</title>
+    <script src="/static/js/frame/vue/vue.js"></script>
+    <script src="/static/js/frame/axios/axios.min.js"></script>
+    <script src="/static/js/frame/axios/qs.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+    <div>
+        <div>写博客</div>
+        标题：<input type="text" v-model="title"/><br/>
+        描述：<input type="text" v-model="desc"/><br/>
+        内容：<textarea cols="50" v-model="content" rows="10">{{content}}</textarea><br/>
+        <button v-on:click="publish()">提交</button>
+    </div>
+
+    <br/>
+    <br/>
+    <div>
+
+        <div>博文列表</div>
+        <div>
+            <button v-on:click="listbowen(1)">查询</button>
+            标题:<input type="text" v-model="query.title"/>
+            描述:<input type="text" v-model="query.desc"/>
+            内容:<input type="text" v-model="query.content"/>
+        </div>
+        <br/>
+        <div>
+            <button v-on:click="listbowen(paging.pageNum-1)">上一页</button>
+            <button v-on:click="listbowen(paging.pageNum+1)">下一页</button>
+            <span>当前页:{{paging.pageNum}}</span>
+            <span>总条数:{{paging.total}}</span>
+            <span>总页数:{{paging.pages}}</span>
+            <span>每页大小:{{paging.pageSize}}</span>
+        </div>
+        <table border="1">
+
+            <thead>
+            <tr>
+                <td>id</td>
+                <td>title</td>
+                <td>desc</td>
+                <td>publishTime</td>
+                <td>status</td>
+                <td>browseNum</td>
+                <td>commentNum</td>
+                <td>praiseNum</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="articles in articlesList">
+                <td>
+                {{articles.id}}
+                </td>
+                <td>
+                    <input style="width: 100px" type="text" v-model="articles.title"/>
+                </td>
+                <td>
+                    <input style="width: 100px" type="text" v-model="articles.desc"/>
+                </td>
+                <td>{{articles.publishTime}}</td>
+                <td>{{articles.status}}</td>
+                <td>
+                    <input style="width: 30px" type="text" v-model="articles.browseNum"/>
+                </td>
+                <td>{{articles.commentNum}}</td>
+                <td>{{articles.praiseNum}}</td>
+                <td>
+                    <button @click="modifybowen(articles)">修改</button>
+                    <button @click="deletebowen(articles)">删除</button>
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            title:'Go and Vue',
+            desc:'Go 语言包管理网站提供类似的功能，无需 Git 和 Hg 等版本管理工具，就可以下载指定版本的 Go 语言包。也可以到该网站下载，网址：gopm.io。',
+            content:'使用方法：\n' +
+                    '输入完整包名，如：github.com/nsf/gocode，回车或点击【Go!】。如果包名输入正确的话，下面会有提示下载过程，如果服务器上 `go get` 正确完成，下载地址列表会列出所有相关的包，点击下载即可。\n' +
+                    '接下来介绍如何安装这些包：\n' +
+                    '先在你的 $GOPATH 目录(如果不懂 GOPATH，请先弄懂)下，创建目录 src：',
+            articles: {},
+
+            articlesList: null,
+            paging: {
+                pageNum: 1,
+                pageSize: 5,
+                total: 0,
+                pages: 0
+            },
+            query: {
+                title: '',
+                desc: '',
+                content: '',
+                paging: {}
+            }
+        },
+        mounted: function () {
+            this.listbowen(1)
+        },
+        methods: {
+            publish: function () {
+                var data = {
+                    title: vm.title,
+                    desc: vm.desc,
+                    status:'INIT',
+                    articlesDetails:{
+                        editorType:'RICH',
+                        content: vm.content
+                    }
+                };
+                console.log("call publish_ data:",data);
+                axios.post('/admin/bowen/publish',data
+                ).then(function (response) {
+                    console.log(response);
+                    if (response.data.success) {
+                        alert("发表成功");
+                    } else {
+                        alert(response.data.code + "-" + response.data.msg);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            listbowen: function (pageNum, that = this) {
+                console.log("listbowen pageNum:%o,that:%o", pageNum, that);
+                if (pageNum < 1 || (that.paging.pages !== 0 && pageNum > that.paging.pages)) {
+                    return;
+                }
+                that.paging.pageNum = pageNum;
+                that.query.paging = that.paging;
+                axios.post(
+                        '/admin/bowen/list', that.query
+                ).then(function (response) {
+                    console.log("listbowen:", response);
+                    if (response.data.success) {
+                        vm.articlesList = response.data.result;
+                        vm.paging = response.data.paging
+                    } else {
+                        alert(response.data.code + "-" + response.data.msg);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            modifybowen: function (articles) {
+                console.log("articles:", articles);
+                axios.post(
+                        '/admin/bowen/modify',articles
+                ).then(function (response) {
+                    console.log("modifybowen:", response);
+                    if (response.data.success) {
+                        alert("修改成功");
+                        vm.$options.methods.listbowen(vm.paging.pageNum, vm);
+                    } else {
+                        alert(response.data.code + "-" + response.data.msg);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            deletebowen: function (articles) {
+                console.log("articles:", articles);
+                axios.post(
+                        '/admin/bowen/delete',articles
+                ).then(function (response) {
+                    console.log("deletebowen:", response);
+                    if (response.data.success) {
+                        alert("删除成功");
+                        vm.$options.methods.listbowen(vm.paging.pageNum, vm);
+                    } else {
+                        alert(response.data.code + "-" + response.data.msg);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }
+    });
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<article class="post post-1" v-if="articlesList == null || articlesList.length == 0">
+    <header v-if="!loading" class="entry-header">
+        <h1 class="entry-title">
+            未找到您需要的文章哦!
+        </h1>
+        <h1 v-if="loading" class="entry-title">
+            正在努力加载中哦...
+        </h1>
+        <h1 class="entry-title">
+            <form class="comment-form" onsubmit="return false">
+                <button @click="back()" class="comment-btn">刷新</button>
+            </form>
+        </h1>
+    </header>
+</article>
+
+<div id="top">
+    <article class="post post-1" v-for="(articles,index) in articlesList" @touchmove="touchMore(index)">
+        <header class="entry-header">
+            <h1 class="entry-title">
+                <a href="#">{{articles.title}}</a>
+            </h1>
+            <div class="entry-meta">
+                <span class="post-category"><a href="#">{{types[articles.type]}}</a></span>
+                <span class="post-date"><a href="#">{{dateFormat(articles.publishTime,true)}}</a></span>
+                <span class="post-author"><a href="#">{{articles.publisher}}</a></span>
+                <span class="comments-link"><a href="#">{{articles.commentNum}} 评论</a></span>
+                <span class="views-count"><a href="#">{{articles.browseNum}} 阅读</a></span>
+                <span class="views-count"><a href="#">{{articles.praiseNum}} 点赞</a></span>
+            </div>
+        </header>
+        <div class="entry-content clearfix">
+            <p v-html="articles.desc"></p>
+            <div class="clearfix"></div>
+        <div class="entry-meta">
+        <div class="pull-left" v-if="articles.categorys.length>0">
+            【分类】<span class="post-category" v-for="category in articles.categorys"><a href="#">{{category.categoryName}}</a></span>
+        </div>
+        <div class="pull-left" v-if="articles.tags.length>0">
+            【标签】<span class="post-category" v-for="tag in articles.tags"><a href="#">{{tag.tagName}}</a></span>
+        </div>
+        </div>
+            <div class="read-more cl-effect-14">
+                <a v-bind:href="todetails(articles.id)" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
+            </div>
+        </div>
+    </article>
+</div>
+<div class="read-more cl-effect-14" v-if="loading">加载中...</div>
+<div class="read-more cl-effect-14" v-if="!loading && bean.paging.pageNum < bean.paging.pages">
+    <a @click="loadMore()" class="more-link">加载更多 <span class="meta-nav">→</span></a>
+</div>

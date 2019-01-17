@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <<<template "taglib.html">>>
+    <title>首页</title>
+
+    <!--
+    <link href="/static/css/hplus/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="/static/css/hplus/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+
+
+    <script src="/static/js/frame/hplus/plugins/summernote/summernote.min.js.bak.bak"></script>
+    <script src="/static/js/frame/hplus/plugins/summernote/summernote-zh-CN.js"></script>
+
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=8v7xg5po7i5vshrrw7ilbr2qwancr96m08g0h6qo5gyv44a8"></script>
+    <script>
+        tinymce.init({
+            selector: '#content_markdown',
+            // language: 'zh_CN',
+        });
+    </script>
+    -->
+
+
+    <link href="/static/css/editormd/editormd.css" rel="stylesheet">
+
+    <script src="/static/js/frame/editormd/lib/marked.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/prettify.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/raphael.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/underscore.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/sequence-diagram.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/flowchart.min.js"></script>
+    <script src="/static/js/frame/editormd/lib/jquery.flowchart.min.js"></script>
+    <script src="/static/js/frame/editormd/editormd.min.js.bak"></script>
+    <script src="/static/js/frame/editormd/editormd.min.js.bak"></script>
+
+
+</head>
+<body>
+
+    <h1>
+        首页 <<<.msg>>>|<<<.>>>|<<<.num>>>|<<< appName >>>
+        <button onclick="al()">打印</button>
+    </h1>
+
+     <div id="content_markdown">
+        <textarea>
+# goblog
+        </textarea>
+     </div>
+
+    <!--
+    <script type="text/javascript">
+        var markEditormd;
+
+        $(function() {
+            markEditormd = editormd("content_markdown", {
+                placeholder : "此处开始编写您要发布的内容...",
+                width: "90%",
+                height: 640,
+                codeFold : true,
+                syncScrolling: "single",
+                path: "/static/js/frame/editormd/lib/",
+                emoji: true,
+                taskList: true,
+                tocm: true,         // Using [TOCM]
+                tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+                flowChart: true,             // 开启流程图支持，默认关闭
+                sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+                //这个配置在simple.html中并没有，但是为了能够提交表单，使用这个配置可以让构造出来的HTML代码直接在第二个隐藏的textarea域中，方便post提交表单。
+                saveHTMLToTextarea : true,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo","redo","|","bold","italic","quote","uppercase","lowercase","|","h1","h2","h3","h4","|","list-ul","list-ol","hr","|","link","image","code","code-block","table","html-entities","|","watch","preview","fullscreen","clear","|","help"]
+                },
+            })
+        });
+
+        function al(){
+            alert(markEditormd.getMarkdown());
+        }
+
+    </script>
+    -->
+
+    <script type="text/javascript">
+        $(function() {
+            editormd.markdownToHTML('content_markdown', {
+                htmlDecode: "style,script,iframe",
+                path: "/static/js/frame/editormd/lib/",
+                emoji: true,
+                taskList: true,
+                tex: true,  // 默认不解析
+                flowChart: true,  // 默认不解析
+                sequenceDiagram: true,  // 默认不解析
+                tocm: true,         // Using [TOCM]
+            })
+        });
+    </script>
+
+</body>
+</html>

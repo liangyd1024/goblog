@@ -1,0 +1,174 @@
+<<<template "head.html">>>
+
+    <div class="content-body">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8">
+                    <input type="hidden" id="id" value="<<<.id>>>" />
+                    <input type="hidden" id="commentCommentator" value="<<<.commentCommentator>>>" />
+                    <input type="hidden" id="commentEmail" value="<<<.commentEmail>>>" />
+
+                    <article class="post post-1" v-if="articles.title == null">
+                        <header class="entry-header">
+                            <h1 class="entry-title">
+                                正在努力加载中哦...
+                            </h1>
+                            <h1 class="entry-title">
+                                <form class="comment-form" onsubmit="return false">
+                                    <button @click="redirectUrl('/')" class="comment-btn">刷新</button>
+                                </form>
+                            </h1>
+                        </header>
+                    </article>
+
+                    <article v-if="articles.title != null" class="post post-1">
+                        <header class="entry-header">
+                            <h1 id="top" class="entry-title">{{articles.title}}</h1>
+                            <div class="entry-meta">
+                                <span class="post-category"><a href="#">{{types[articles.type]}}</a></span>
+                                <span class="post-date"><a href="#">{{dateFormat(articles.publishTime,false)}}</a></span>
+                                <span class="post-author"><a href="#">{{articles.publisher}}</a></span>
+                                <span class="comments-link"><a href="#">{{articles.commentNum}} 评论</a></span>
+                                <span class="views-count"><a href="#">{{articles.browseNum}} 阅读</a></span>
+                                <span class="views-count"><a href="#">{{articles.praiseNum}} 点赞</a></span>
+                            </div>
+                        </header>
+                        <div class="entry-content clearfix">
+                            <!--  富文本  -->
+                            <p v-if="articles.articlesDetails.editorType=='RICH'" v-html="articles.articlesDetails.content">
+
+                            </p>
+
+                            <!--  markdown  -->
+                            <div id="content_markdown" v-if="articles.articlesDetails.editorType=='MD'">
+                                <textarea style="display:none;">{{articles.articlesDetails.content}}</textarea>
+                            </div>
+
+                        </div>
+                        <div class="entry-meta clearfix">
+                            <div class="pull-left" v-if="articles.categorys != null && articles.categorys.length>0">
+                                【分类】<span class="post-category" v-for="category in articles.categorys"><a href="#">{{category.categoryName}}</a></span>
+                            </div>
+                            <div class="pull-left" v-if="articles.tags != null && articles.tags.length>0">
+                                【标签】<span class="post-category" v-for="tag in articles.tags"><a href="#">{{tag.tagName}}</a></span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <section class="comment-area" id="comment-area">
+                        <hr>
+                        <h3><a href="javascript:void(0)" id="pubClick" @click="pubClick()">发表评论</a></h3>
+                        <form class="comment-form" onsubmit="return false">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="id_name">名字：</label>
+                                    <input type="text" id="commentator" v-model="bean.commentator" name="name" placeholder="输入名称" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="id_email">邮箱：</label>
+                                    <input type="email" id="email" v-model="bean.email" name="email" placeholder="输入邮箱" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <div v-if="!replyFlag">
+                                        <label for="id_comment">评论：</label>
+                                        <textarea name="comment" v-model="bean.content" id="content" placeholder="留言区" required></textarea>
+                                        <button v-if="!replyFlag" id="pubcomment" @click="pubcomment()" class="comment-btn">发表</button>
+                                    </div>
+                                    <div v-else>
+                                        <label for="id_comment">回复 @ {{replyComment.commentator}}</label>
+                                        <textarea name="comment" v-model="bean.content" id="replycontent" placeholder="回复区" required></textarea>
+                                        <button id="replycomment" @click="replycomment()" class="comment-btn">回复</button>
+                                    </div>
+                                </div>
+                            </div>    <!-- row -->
+                        </form>
+                        <div class="comment-list-panel">
+                            <h3>评论列表，共 <span>{{bean.paging.total}}</span> 条评论</h3>
+                            <ul class="comment-list list-unstyled">
+                                <li :id="commentItem(index)" class="comment-item" v-for="(comment,index) in commentList" >
+                                    <a @touchmove="mouseEnter(index)" @click="mouseEnter(index)" @mouseenter="mouseEnter(index)" @mouseleave="mouseLeave()">
+                                        <span class="nickname">{{comment.commentator}}</span>
+                                        <time class="submit-date" >{{dateFormat(comment.commentTime)}}</time>
+                                        <span class="pull-right" v-if="replyMouse && index == replyIndex">
+                                            <form class="comment-form" onsubmit="return false">
+                                                <button @click="replyClick(comment,index)" class="comment-btn">回复</button>
+                                            </form>
+                                        </span>
+                                        <div class="text">
+                                            {{comment.content}}
+                                        </div>
+                                        <!--  回复  -->
+                                        <div style="background-color: #fbfbfb">
+                                            <ul class="comment-list">
+                                                <li class="comment-item" v-for="(replyComment,index) in comment.replyCommentList" >
+                                                    <span class="nickname">{{replyComment.commentator}}</span>
+                                                    <time class="submit-date" >{{dateFormat(replyComment.commentTime)}}</time>
+                                                    <div class="text">
+                                                    {{replyComment.content}}
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="read-more cl-effect-14" v-if="loading">加载中...</div>
+                            <div class="read-more cl-effect-14" v-if="!loading && bean.paging.pageNum < bean.paging.pages">
+                                <a @click="loadMore()" class="more-link">加载更多 <span class="meta-nav">→</span></a>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+                <!--
+                <div id="toc" class="col-md-4" >
+                    <div class="widget widget-content">
+                        <h3 class="widget-title">文章目录</h3>
+                        <ul>
+                            <li>
+                                <a href="#">教程特点</a>
+                            </li>
+                            <li>
+                                <a href="#">谁适合这个教程</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                -->
+
+                <<<template "aside.html">>>
+
+        </div>
+        </div>
+    </div>
+
+    <div>
+        <div @click="praise()" id="praise" class="fc praise">
+            <span title="点赞" class="font-noraml col-sm-4"><i class="fa fa-thumbs-up"></i> </span>
+        </div>
+        <div class="fc top">
+            <a href="#top">top</a>
+        </div>
+    </div>
+
+</div>
+
+<link href="/static/css/editormd/editormd.css" rel="stylesheet">
+
+<script src="/static/js/frame/editormd/lib/marked.min.js"></script>
+<script src="/static/js/frame/editormd/lib/prettify.min.js"></script>
+<script src="/static/js/frame/editormd/lib/raphael.min.js"></script>
+<script src="/static/js/frame/editormd/lib/underscore.min.js"></script>
+<script src="/static/js/frame/editormd/lib/sequence-diagram.min.js"></script>
+<script src="/static/js/frame/editormd/lib/flowchart.min.js"></script>
+<script src="/static/js/frame/editormd/lib/jquery.flowchart.min.js"></script>
+<script src="/static/js/frame/editormd/editormd.js"></script>
+
+<script src="/static/js/details.js"></script>
+
+<<<template "footer.html">>>
+
+</body>
+</html>
+
+

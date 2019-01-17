@@ -1,0 +1,32 @@
+<<<template "head.html">>>
+
+    <div class="content-body">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-12">
+                    <input type="hidden" id="id" value="<<<.id>>>"/>
+                    <input type="hidden" id="type" value="<<<.type>>>"/>
+                    <input type="hidden" id="content" value="<<<.content>>>"/>
+
+                    <<<template "articles.html">>>
+
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="fc top">
+            <a href="#top">top</a>
+        </div>
+    </div>
+
+
+</div>
+
+    <script src="/static/js/search.js"></script>
+
+    <<<template "footer.html">>>
+
+</body>
+</html>

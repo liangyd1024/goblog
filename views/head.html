@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <meta name="keywords" content="Golang,VueJs,个人博客,后台管理,响应式后台">
+    <meta name="description" content="goblog是一个完全响应式，基于Go语言和VueJs最新版本开发的个人博客管理系统">
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/>
+    <![endif]-->
+    <title><<< appName >>></title>
+
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    <!-- css -->
+    <link href="/static/css/hplus/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <link href="/static/css/hplus/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/css/tutorial/pace.css">
+    <link rel="stylesheet" href="/static/css/tutorial/custom.css">
+
+    <!-- js -->
+    <script src="/static/js/frame/hplus/jquery.min.js?v=2.1.4"></script>
+    <script src="/static/js/frame/hplus/bootstrap.min.js?v=3.3.6"></script>
+    <script src="/static/js/frame/hplus/plugins/layer/layer.min.js"></script>
+    <script src="/static/js/frame/hplus/plugins/toastr/toastr.min.js"></script>
+    <script src="/static/js/frame/tutorial/pace.min.js"></script>
+    <script src="/static/js/frame/tutorial/modernizr.custom.js"></script>
+
+    <script src="/static/js/frame/axios/axios.min.js"></script>
+    <script src="/static/js/frame/vue/vue.js"></script>
+
+    <script src="/static/js/component/base.js"></script>
+    <script src="/static/js/component/nav-vue.js"></script>
+    <script src="/static/js/component/search.js"></script>
+
+    <style>
+        .fc{
+            position: fixed;
+            left: 1%;
+            z-index: 100;
+            border: 1px solid #eaeaea;
+            width: 50px;
+            height: 50px;
+            line-height: 48px;
+            text-align: center;
+            border-radius: 50px;
+        }
+        .top{
+            bottom: 50%;
+        }
+        .praise{
+            bottom: 40%;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body>
+<div id="app" v-cloak>
+    <div class="container" >
+    <header id="site-header">
+        <div class="row">
+            <div class="col-md-4 col-sm-5 col-xs-8">
+                <div class="logo">
+                    <h1><a href="index.html"><b>Go</b> &amp; Blog</a></h1>
+                </div>
+            </div><!-- col-md-4 -->
+            <div class="col-md-8 col-sm-7 col-xs-4">
+                <nav class="main-nav" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" id="trigger-overlay" class="navbar-toggle">
+                            <span class="ion-navicon"></span>
+                        </button>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="cl-effect-11"><a href="/" data-hover="首页">首页</a></li>
+                            <li class="cl-effect-11"><a href="/" data-hover="博客">博客</a></li>
+                            <li class="cl-effect-11"><a href="/about" data-hover="关于">关于</a></li>
+                            <li class="cl-effect-11"><a href="/contact" data-hover="联系">联系</a></li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </nav>
+                <div id="header-search-box">
+                    <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
+                    <div id="search-form" class="search-form">
+                        <form role="search" id="searchform" onsubmit="return false">
+                            <input type="search" placeholder="搜索" v-model="searchText">
+                            <button @click="tosearch('articles',0,searchText)"><span class="ion-ios-search-strong"></span></button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- col-md-8 -->
+        </div>
+    </header>
+</div>
