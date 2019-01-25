@@ -31,8 +31,10 @@ const (
 
 //全文搜索引擎
 var fullTextSearcher = riot.Engine{}
+
 //搜索服务
 var SearchBiz searchService
+
 //引擎类型
 var engineType map[string]SearchEngine
 

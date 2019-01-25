@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	. "goblog/src/logs"
+	"goblog/src/utils/bizerror"
 	"goblog/src/utils/constant"
 )
 
@@ -23,7 +24,8 @@ var (
 )
 
 func init() {
-	beego.LoadAppConfig("ini", "resource/beego.conf")
+	err := beego.LoadAppConfig("ini", "conf/beego.conf")
+	bizerror.Check(err)
 
 	//日志配置
 	logConf()
@@ -32,7 +34,7 @@ func init() {
 	//函数导出信息
 	funcConf()
 
-	Log.Printf("goblog starup successful!!!")
+	Log.Printf("goblog starup successful appPath:%v", beego.AppPath)
 }
 
 func dbConf() {
@@ -58,6 +60,8 @@ func logConf() {
 
 func funcConf() {
 	cfg := beego.AppConfig
-	beego.AddFuncMap("getValue", constant.GetValue)
-	beego.AddFuncMap("appName", func() string { return cfg.String("appname") })
+	err := beego.AddFuncMap("getValue", constant.GetValue)
+	bizerror.Check(err)
+	err = beego.AddFuncMap("appName", func() string { return cfg.String("appname") })
+	bizerror.Check(err)
 }

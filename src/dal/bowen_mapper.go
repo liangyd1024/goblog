@@ -313,7 +313,7 @@ func (bowenMapper *BowenMapper) DeleteArticlesCategory(articlesCategory *model.A
 }
 
 func (bowenMapper *BowenMapper) CollectGroup(field string) []*model.ArticlesCollect {
-	articlesCollects := make([]*model.ArticlesCollect, 1)
+	var articlesCollects []*model.ArticlesCollect
 	ormer := getOrmer()
 	raw := ormer.Raw("select t." + field + ",count(1) as `total` from `t_goblog_articles` t group by t." + field)
 	rows, err := raw.QueryRows(&articlesCollects)
@@ -323,7 +323,7 @@ func (bowenMapper *BowenMapper) CollectGroup(field string) []*model.ArticlesColl
 }
 
 func (bowenMapper *BowenMapper) CollectPlaceOfFile() []*model.ArticlesCollect {
-	articlesCollects := make([]*model.ArticlesCollect, 1)
+	var articlesCollects []*model.ArticlesCollect
 	ormer := getOrmer()
 	raw := ormer.Raw("select date_format(`publish_time`,'%Y-%m') type,count(1) `total` from `t_goblog_articles` group by date_format(`publish_time`,'%Y-%m')")
 	rows, err := raw.QueryRows(&articlesCollects)

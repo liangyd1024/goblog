@@ -6,6 +6,7 @@
 package logs
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"goblog/src/utils/bizerror"
 	"goblog/src/utils/datetime"
@@ -34,14 +35,24 @@ func InitLogs() *logs {
 		defer lock.Unlock()
 		if me == nil {
 			cfg := beego.AppConfig
+			currentPath, err := os.Getwd()
+			bizerror.Check(err)
+			fmt.Println("call InitLogs currentPath:" + currentPath)
+
 			me = new(logs)
-			me.console = cfg.DefaultBool("console", true)
-			me.file = cfg.DefaultBool("file", true)
-			me.filePath = cfg.DefaultString("filePath", "/Users/marco/Work/Project/Go/src/goblog/log/"+datetime.ParseNowTime(datetime.FM_DATE)+".log")
+			me.console = cfg.DefaultBool("consoleMode", true)
+			me.file = cfg.DefaultBool("fileMode", true)
+			me.filePath = cfg.DefaultString("filePath", currentPath+"/log/")
+
+			_, err = os.Stat(me.filePath)
+			if os.IsNotExist(err) {
+				err := os.MkdirAll(me.filePath, 0766)
+				bizerror.CheckBizError(err, bizerror.BizError404002)
+			}
+			me.filePath += datetime.ParseNowTime(datetime.FM_DATE) + ".log"
 
 			//TODO
-			logFile, err := os.OpenFile(me.filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-			bizerror.CheckBizError(err, bizerror.BizError404002)
+			logFile, err := os.OpenFile(me.filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
 			multiWriter := io.MultiWriter(logFile, os.Stdout)
 			me.writer = multiWriter
 			Log = log.New(multiWriter, "["+cfg.String("appname")+"]", log.Ldate|log.Ltime|log.Lshortfile)
