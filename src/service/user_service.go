@@ -58,7 +58,6 @@ func (userSer userBiz) CheckPwd(user *model.User) *model.User {
 	findUser := userSer.GetUser(user.UserName)
 	md5Pwd := crypt.GetMd5(user.UserPwd)
 	if findUser == nil || findUser.UserPwd != md5Pwd {
-		log.Printf("call CheckPwd findUser.UserPwd:%v,md5Pwd:%v", findUser.UserPwd, md5Pwd)
 		bizerror.BizError400101.PanicError()
 	}
 	return findUser

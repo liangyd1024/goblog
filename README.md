@@ -6,6 +6,7 @@
 ## goblog介绍
 
 > goblog基于go语言开发的一个简约版个人博客系统,基于Golang语言编写,后端基于了Beego的web框架,目前具备博文系统最基础的功能模块.基本上是一个拿来即用的个人博文平台,只需要部署一个mysql数据存储服务,即可作为个人博文的发布平台使用.
+> 请给我一个Start : https://github.com/liangyd1024/goblog
 
 ## goblog界面截图
 
@@ -18,15 +19,10 @@
 
 **PC前端展示**
 
-- ![](https://ws1.sinaimg.cn/large/006tNc79gy1fzmd8ka8mbj31mq0u0n6r.jpg)
-- ![](https://ws4.sinaimg.cn/large/006tNc79gy1fzmdd7bvluj31mw0u0h1z.jpg)
-- ![](https://ws1.sinaimg.cn/large/006tNc79gy1fzmdeyausgj31mx0u0qbe.jpg)
-- ![](https://ws4.sinaimg.cn/large/006tNc79gy1fzmdeet12bj31nb0u0dmf.jpg)
+- http://panally.cn
 
 **手机前端展示**
-- ![](https://ws2.sinaimg.cn/large/006tNc79gy1fzmdinfw1mj30u01hcq8s.jpg)
-- ![](https://ws2.sinaimg.cn/large/006tNc79gy1fzmdigavjlj30u01hcgrm.jpg)
-- ![](https://ws3.sinaimg.cn/large/006tNc79gy1fzmdko5i9qj30u01hcgop.jpg)
+- http://panally.cn
 
 ## goblog技术组件
 
@@ -134,7 +130,7 @@
    ./goblog
    ```
 
-- 或者通过`go run main.go`命令运行goblog
+- 我们也可以先通过`go mod tidy`命令将应用的依赖包下载下来然后使用`go run main.go`来运行我们的goblog
 
 - 运行后可以通过控台查看到启动日志
 ![](https://ws1.sinaimg.cn/large/006tNc79gy1fzmd1byxnfj31no0u0gqn.jpg)
