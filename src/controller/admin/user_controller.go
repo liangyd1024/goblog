@@ -6,6 +6,7 @@
 package admin
 
 import (
+	"github.com/astaxie/beego"
 	"goblog/src/controller"
 	. "goblog/src/logs"
 	"goblog/src/model"
@@ -19,11 +20,11 @@ type UserController struct {
 	controller.BaseController
 }
 
-//初始化admin用户
+//初始化用户
 func init() {
 	user := new(model.User)
-	user.UserName = "admin"
-	user.UserPwd = "goblog"
+	user.UserName = beego.AppConfig.DefaultString("userName", "admin")
+	user.UserPwd = beego.AppConfig.DefaultString("userPwd", "goblog")
 	user.NickName = constant.SYS
 	user.UserType = constant.SYS
 	user.Status = constant.USER_NORMAL_STATUS
