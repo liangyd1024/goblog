@@ -114,6 +114,7 @@ func (bowen *BowenController) ModifyArticles() {
 	articles := new(model.Articles)
 	bowen.ParseJson(articles)
 
+	articles.UpdateBy = bowen.GetUserName()
 	service.BowenBiz.ModifyArticles(articles)
 
 	bowen.BuildSucResponse(articles)

@@ -10,13 +10,17 @@ import (
 	"goblog/src/utils/bizerror"
 )
 
+const (
+	AliasName = "default"
+)
+
 func init() {
 	dataSource := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&loc=Local", config.DB.DbUser, config.DB.DbPwd, config.DB.DbUrls, config.DB.DbName)
-	Log.Printf("call mysql dataSource:%v", dataSource)
+	Log.Sys("call mysql dataSource:%v", dataSource)
 	err := orm.RegisterDriver("mysql", orm.DRMySQL)
 	bizerror.Check(err)
 
-	err = orm.RegisterDataBase("default", "mysql", dataSource, config.DB.DbMaxIdleConns, config.DB.DbMaxConns)
+	err = orm.RegisterDataBase(AliasName, "mysql", dataSource, config.DB.DbMaxIdleConns, config.DB.DbMaxConns)
 	bizerror.Check(err)
 
 	orm.RegisterModelWithPrefix("t_goblog_",
@@ -30,6 +34,9 @@ func init() {
 		new(model.User),
 	)
 
-	err = orm.RunSyncdb("default", config.DB.DbForce, true)
+	orm.SetMaxIdleConns(AliasName, config.DB.DbMaxIdleConns)
+	orm.SetMaxOpenConns(AliasName, config.DB.DbMaxConns)
+
+	err = orm.RunSyncdb(AliasName, config.DB.DbForce, true)
 	bizerror.Check(err)
 }

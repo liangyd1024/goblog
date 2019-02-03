@@ -32,8 +32,8 @@ func (fileUploadController *FileUploadController) UploadEditorImage() {
 
 	fileNames := strings.Split(header.Filename, ".")
 	uploadUrl := "static/upload/editor/" + guid + "_" + fileNames[0] + "." + fileNames[1]
-	Log.Printf("call UploadEditorImage file name:%v,size:%v,uploadUrl:%v", header.Filename, header.Size, uploadUrl)
-	defer file.Close()
+	Log.Info("call UploadEditorImage file name:%v,size:%v,uploadUrl:%v", header.Filename, header.Size, uploadUrl)
+	defer bizerror.Check(file.Close())
 
 	err = fileUploadController.SaveToFile("editormd-image-file", uploadUrl)
 	bizerror.Check(err)
@@ -43,7 +43,7 @@ func (fileUploadController *FileUploadController) UploadEditorImage() {
 	result["message"] = "上传成功"
 	result["url"] = fileUploadController.Site(uploadUrl)
 
-	Log.Printf("call UploadEditorImage result:%v", result)
+	Log.Info("call UploadEditorImage result:%v", result)
 	fileUploadController.Data["json"] = result
 	fileUploadController.ServeJSON()
 }

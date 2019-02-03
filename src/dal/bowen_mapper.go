@@ -152,7 +152,7 @@ func (bowenMapper *BowenMapper) GetByCondition(articles *model.Articles) []*mode
 
 	articles.Paging.CalPages(int64(total))
 
-	Log.Printf("call GetByCondition rows:%v", rows)
+	Log.Info("call GetByCondition rows:%v", rows)
 	return articlesList
 }
 
@@ -179,7 +179,7 @@ func (bowenMapper *BowenMapper) GetArticlesTags(articlesTag *model.ArticlesTag) 
 
 	articlesTag.Paging.CalPages(total)
 
-	Log.Printf("call GetArticlesTags rows:%v", rows)
+	Log.Info("call GetArticlesTags rows:%v", rows)
 	return articlesTags
 }
 
@@ -209,7 +209,7 @@ func (bowenMapper *BowenMapper) GetArticlesCategorys(articlesCategory *model.Art
 	rows, err := querySeter.
 		All(&articlesCategorys)
 	bizerror.Check(err)
-	Log.Printf("call GetArticlesCategorys rows:%v", rows)
+	Log.Info("call GetArticlesCategorys rows:%v", rows)
 	return articlesCategorys
 }
 
@@ -246,7 +246,7 @@ func (bowenMapper *BowenMapper) GetComments(comment *model.Comment) []*model.Com
 
 	comment.Paging.CalPages(total)
 
-	Log.Printf("call GetComments rows:%v", rows)
+	Log.Info("call GetComments rows:%v", rows)
 	return comments
 }
 
@@ -318,17 +318,17 @@ func (bowenMapper *BowenMapper) CollectGroup(field string) []*model.ArticlesColl
 	raw := ormer.Raw("select t." + field + ",count(1) as `total` from `t_goblog_articles` t group by t." + field)
 	rows, err := raw.QueryRows(&articlesCollects)
 	bizerror.Check(err)
-	Log.Printf("call CollectGroup rows:%v", rows)
+	Log.Info("call CollectGroup rows:%v", rows)
 	return articlesCollects
 }
 
 func (bowenMapper *BowenMapper) CollectPlaceOfFile() []*model.ArticlesCollect {
 	var articlesCollects []*model.ArticlesCollect
 	ormer := getOrmer()
-	raw := ormer.Raw("select date_format(`publish_time`,'%Y-%m') type,count(1) `total` from `t_goblog_articles` group by date_format(`publish_time`,'%Y-%m')")
+	raw := ormer.Raw("select date_format(`publish_time`,'%Y-%m') type,count(1) `total` from `t_goblog_articles` group by date_format(`publish_time`,'%Y-%m') order by `publish_time` desc")
 	rows, err := raw.QueryRows(&articlesCollects)
 	bizerror.Check(err)
-	Log.Printf("call CollectPlaceOfFile rows:%v", rows)
+	Log.Info("call CollectPlaceOfFile rows:%v", rows)
 	return articlesCollects
 }
 
@@ -338,6 +338,6 @@ func (bowenMapper *BowenMapper) ListRecommendArticles(size int) []*model.Article
 	raw := ormer.Raw("select * from (select * from `t_goblog_articles` GROUP BY id ORDER BY max(`browse_num`) desc LIMIT 0,?) as t", strconv.Itoa(size))
 	rows, err := raw.QueryRows(&articlesList)
 	bizerror.Check(err)
-	Log.Printf("call ListRecommendArticles rows:%v", rows)
+	Log.Info("call ListRecommendArticles rows:%v", rows)
 	return articlesList
 }

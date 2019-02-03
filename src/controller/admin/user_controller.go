@@ -60,7 +60,7 @@ func (userController *UserController) Login() {
 	user := &model.User{}
 	userController.ParseJson(user)
 
-	Log.Printf("call Login user:%v", user)
+	Log.Info("call Login user:%v", user)
 	captchaUid := userController.GetSession("CaptchaUid")
 	if captchaUid == nil || !crypt.VerifyCaptcha(captchaUid.(string), user.Captcha) {
 		bizerror.BizError400102.PanicError()

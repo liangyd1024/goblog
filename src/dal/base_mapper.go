@@ -27,14 +27,14 @@ func getOrmer() orm.Ormer {
 //事物处理
 func transaction(invoker func(ormer orm.Ormer)) {
 	ormer := getOrmer()
-	ormer.Begin()
+	bizerror.Check(ormer.Begin())
 
 	defer func() {
 		if err := recover(); err != nil {
-			ormer.Rollback()
+			bizerror.Check(ormer.Rollback())
 			panic(err)
 		} else {
-			ormer.Commit()
+			bizerror.Check(ormer.Commit())
 		}
 	}()
 

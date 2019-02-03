@@ -79,7 +79,7 @@ func (articlesController *ArticlesController) ListPlaceOfFile() {
 
 // @router /articles/:id [get]
 func (articlesController *ArticlesController) ToArticles() {
-	Log.Printf("call ToDetails id:%v", articlesController.Ctx.Input.Param(":id"))
+	Log.Info("call ToDetails id:%v", articlesController.Ctx.Input.Param(":id"))
 	articlesController.Data["id"] = articlesController.Ctx.Input.Param(":id")
 
 	stdEncoding := base64.StdEncoding
@@ -111,7 +111,7 @@ func (articlesController *ArticlesController) Browse() {
 
 	browseCookieKey := "browseCookie_" + strconv.Itoa(articles.Id)
 	browseCookie := articlesController.Ctx.Input.Cookie(browseCookieKey)
-	Log.Printf("call Browse browseCookieKey:%v,browseCookie:%v", browseCookieKey, browseCookie)
+	Log.Info("call Browse browseCookieKey:%v,browseCookie:%v", browseCookieKey, browseCookie)
 	if browseCookie == "" {
 		service.BowenBiz.Browse(articles)
 		articlesController.Ctx.SetCookie(browseCookieKey, "true", 3600)
@@ -131,7 +131,7 @@ func (articlesController *ArticlesController) Praise() {
 
 	praiseCookieKey := "praiseCookie_" + strconv.Itoa(articles.Id)
 	praiseCookie := articlesController.Ctx.GetCookie(praiseCookieKey)
-	Log.Printf("call Praise praiseCookieKey:%v,praiseCookie:%v", praiseCookieKey, praiseCookie)
+	Log.Info("call Praise praiseCookieKey:%v,praiseCookie:%v", praiseCookieKey, praiseCookie)
 	if praiseCookie == "" {
 		service.BowenBiz.Praise(articles)
 		articlesController.Ctx.SetCookie(praiseCookieKey, "true", 3600)

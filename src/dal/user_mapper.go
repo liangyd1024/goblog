@@ -54,6 +54,6 @@ func (userMapper *UserMapper) GetByCondition(user *model.User) []*model.User {
 
 	user.Paging.CalPages(total)
 
-	Log.Printf("call GetByCondition rows:%v", rows)
+	Log.Info("call GetByCondition rows:%v", rows)
 	return userList
 }

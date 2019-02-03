@@ -76,7 +76,7 @@ func (bowenSer bowenService) ModifyArticles(articles *model.Articles) {
 	check.CheckParams(articles)
 	check.CheckParams(articles.ArticlesDetails)
 
-	Log.Printf("call ModifyArticles articles:%+v", articles)
+	Log.Info("call ModifyArticles articles:%+v", articles)
 
 	queryArticles := &model.Articles{Id: articles.Id}
 	bowenMapper := bowenSer.GetMapper()
@@ -93,6 +93,8 @@ func (bowenSer bowenService) ModifyArticles(articles *model.Articles) {
 	queryArticles.Desc = articles.Desc
 	queryArticles.Type = articles.Type
 	queryArticlesDetails.Content = articles.ArticlesDetails.Content
+	queryArticles.UpdateBy = articles.UpdateBy
+	queryArticlesDetails.UpdateBy = articles.UpdateBy
 
 	//博文标签集
 	if articles.Tags != nil && len(articles.Tags) > 0 {
@@ -119,7 +121,7 @@ func (bowenSer bowenService) ModifyArticles(articles *model.Articles) {
 }
 
 func (bowenSer bowenService) DeleteArticles(articles *model.Articles) {
-	Log.Printf("call DeleteArticles id:%+v", articles.Id)
+	Log.Info("call DeleteArticles id:%+v", articles.Id)
 
 	bowenMapper := bowenSer.GetMapper()
 	if bowenMapper.Get(&model.Articles{Id: articles.Id}) == nil {
@@ -132,7 +134,7 @@ func (bowenSer bowenService) DeleteArticles(articles *model.Articles) {
 }
 
 func (bowenSer bowenService) DeleteArticlesTag(articlesTag *model.ArticlesTag) {
-	Log.Printf("call DeleteArticlesTag id:%+v", articlesTag.Id)
+	Log.Info("call DeleteArticlesTag id:%+v", articlesTag.Id)
 
 	bowenMapper := bowenSer.GetMapper()
 
@@ -145,7 +147,7 @@ func (bowenSer bowenService) DeleteArticlesTag(articlesTag *model.ArticlesTag) {
 }
 
 func (bowenSer bowenService) DeleteArticlesCategory(articlesCategory *model.ArticlesCategory) {
-	Log.Printf("call DeleteArticlesCategory id:%+v", articlesCategory.Id)
+	Log.Info("call DeleteArticlesCategory id:%+v", articlesCategory.Id)
 
 	bowenMapper := bowenSer.GetMapper()
 
@@ -157,7 +159,7 @@ func (bowenSer bowenService) DeleteArticlesCategory(articlesCategory *model.Arti
 }
 
 func (bowenSer bowenService) GetBowenCondition(articles *model.Articles) []*model.Articles {
-	Log.Printf("call GetBowenCondition articles:%+v", articles)
+	Log.Info("call GetBowenCondition articles:%+v", articles)
 	bowenMapper := bowenSer.GetMapper()
 	articlesList := bowenMapper.GetByCondition(articles)
 	for _, articles := range articlesList {
@@ -181,7 +183,7 @@ func (bowenSer bowenService) GetBowen(articles *model.Articles) {
 	articles.Tags, articles.ArticlesTags = bowenMapper.GetTags(articles)
 	articles.Categorys, articles.ArticlesCategorys = bowenMapper.GetCategorys(articles)
 
-	Log.Printf("call GetBowen articles:%+v", articles)
+	Log.Info("call GetBowen articles:%+v", articles)
 }
 
 func (bowenSer bowenService) CollectStatus() []*model.ArticlesCollect {
@@ -206,26 +208,26 @@ func (bowenSer bowenService) Browse(articles *model.Articles) {
 	bowenSer.Lock()
 	defer bowenSer.Unlock()
 
-	Log.Printf("call Browse id:%v", articles.Id)
+	Log.Info("call Browse id:%v", articles.Id)
 	bowenMapper := bowenSer.GetMapper()
 	bowenMapper.Get(articles)
 
 	articles.BrowseNum = articles.BrowseNum + 1
 	bowenMapper.Update(articles, "browse_num", "update_at")
-	Log.Printf("call Browse end id:%v", articles.Id)
+	Log.Info("call Browse end id:%v", articles.Id)
 }
 
 func (bowenSer bowenService) Praise(articles *model.Articles) {
 	bowenSer.Lock()
 	defer bowenSer.Unlock()
 
-	Log.Printf("call Praise id:%v", articles.Id)
+	Log.Info("call Praise id:%v", articles.Id)
 	bowenMapper := bowenSer.GetMapper()
 	bowenMapper.Get(articles)
 
 	articles.PraiseNum = articles.PraiseNum + 1
 	bowenMapper.Update(articles, "praise_num", "update_at")
-	Log.Printf("call Praise end id:%v", articles.Id)
+	Log.Info("call Praise end id:%v", articles.Id)
 }
 
 func (bowenSer bowenService) ListComment(comment *model.Comment) []*model.Comment {
@@ -246,7 +248,7 @@ func (bowenSer bowenService) PubComment(comment *model.Comment) {
 	bowenSer.Lock()
 	defer bowenSer.Unlock()
 
-	Log.Printf("call PubComment ArticlesId:%v", comment.ArticlesId)
+	Log.Info("call PubComment ArticlesId:%v", comment.ArticlesId)
 
 	articles := &model.Articles{Id: comment.ArticlesId}
 	bowenMapper := bowenSer.GetMapper()
@@ -254,5 +256,5 @@ func (bowenSer bowenService) PubComment(comment *model.Comment) {
 
 	bowenMapper.PubComment(comment, articles)
 
-	Log.Printf("call PubComment end ArticlesId:%v", comment.ArticlesId)
+	Log.Info("call PubComment end ArticlesId:%v", comment.ArticlesId)
 }

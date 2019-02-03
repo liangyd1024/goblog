@@ -23,7 +23,7 @@ var (
 //登陆过滤器
 func LoginFilter(ctx *context.Context) {
 	user, ok := ctx.Input.Session("user").(*model.User)
-	Log.Printf("call LoginFilter url:%v,ok:%v,user:%v", ctx.Request.RequestURI, ok, user)
+	Log.Info("call LoginFilter url:%v,ok:%v,user:%v", ctx.Request.RequestURI, ok, user)
 	if (!ok || user == nil) && LOGIN_FILTER_URL_MAP[ctx.Request.RequestURI] == 0 {
 		ctx.Redirect(302, "/admin/login")
 	}
@@ -31,5 +31,5 @@ func LoginFilter(ctx *context.Context) {
 
 //日志过滤器
 func LogFilter(ctx *context.Context) {
-	Log.Printf("call LogFilter url:%s,form:%s,requestBody:%+v", ctx.Request.URL, ctx.Request.Form, string(ctx.Input.RequestBody[:]))
+	Log.Info("call LogFilter url:%s,form:%s,requestBody:%+v", ctx.Request.URL, ctx.Request.Form, string(ctx.Input.RequestBody[:]))
 }

@@ -34,7 +34,7 @@ func init() {
 	//函数导出信息
 	funcConf()
 
-	Log.Printf("goblog starup successful env:%v,appPath:%v", beego.AppConfig.String("runmode"), beego.AppPath)
+	Log.Sys("goblog starup successful env:%v,appPath:%v", beego.AppConfig.String("runmode"), beego.AppPath)
 }
 
 func dbConf() {
@@ -48,14 +48,13 @@ func dbConf() {
 	DB.DbMaxConns = beego.AppConfig.DefaultInt("mysqlMaxOpenConns", 50)
 	DB.DbForce = beego.AppConfig.DefaultBool("mysqlForce", false)
 	DB.DbDebug = beego.AppConfig.DefaultBool("mysqlDebug", true)
-	orm.Debug = true
-	orm.NewLog(GetLogsWriter())
+	orm.Debug = DB.DbDebug
 
-	Log.Printf("call Config init DB:%+v", DB)
+	Log.Sys("call Config init DB:%+v", DB)
 }
 
 func logConf() {
-	InitLogs()
+	InitLogs(false)
 }
 
 func funcConf() {

@@ -19,9 +19,18 @@ func TestGetNowFm(t *testing.T) {
 }
 
 func TestFormatTime(t *testing.T) {
-	fmt.Println(FormatTime(time.Now(),FM_DATE_MOUNTH))
+	fmt.Println(FormatTime(time.Now(), FM_DATE_MOUNTH))
 }
 
 func TestParseTime(t *testing.T) {
-	fmt.Println(ParseTime(FM_DATE_MOUNTH,"2018-12"))
+	fmt.Println(ParseTime(FM_DATE_MOUNTH, "2018-12"))
+
+	go func() {
+		tm := time.NewTimer(time.Duration(time.Second * 5))
+		M := <-tm.C
+		fmt.Println(M)
+	}()
+
+	time.Sleep(time.Second * 10)
+
 }

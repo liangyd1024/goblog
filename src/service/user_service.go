@@ -7,11 +7,11 @@ package service
 
 import (
 	"goblog/src/dal"
+	. "goblog/src/logs"
 	"goblog/src/model"
 	"goblog/src/utils/bizerror"
 	"goblog/src/utils/check"
 	"goblog/src/utils/crypt"
-	"log"
 )
 
 var UserBiz userBiz
@@ -32,7 +32,7 @@ func (userSer userBiz) CreateUser(user *model.User) *model.User {
 	newUser := userSer.GetUser(user.UserName)
 	if newUser == nil {
 		user.UserPwd = crypt.GetMd5(user.UserPwd)
-		log.Printf("call CreateUser user:%v", user)
+		Log.Info("call CreateUser user:%v", user)
 		userSer.GetMapper().Insert(user)
 	}
 	return user

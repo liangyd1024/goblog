@@ -38,7 +38,7 @@ func (base *BaseController) SetSessionUser(user *model.User) {
 //获取当前用户会话
 func (base *BaseController) GetSessionUser() *model.User {
 	user := base.GetSession("user")
-	if user != nil{
+	if user != nil {
 		return user.(*model.User)
 	}
 	return nil
@@ -63,7 +63,7 @@ func (base *BaseController) GetUserName() string {
 //异常处理
 func (base *BaseController) PanicHandler() {
 	if err := recover(); err != nil {
-		Log.Printf("call PanicHandler errInfo:%v,err_type:%v,stack:%v", err, reflect.TypeOf(err),string(debug.Stack()))
+		Log.Error("call PanicHandler errInfo:%v,err_type:%v,stack:%v", err, reflect.TypeOf(err), string(debug.Stack()))
 		bizError := bizerror.BizError500100
 		err, ok := err.(bizerror.BizError)
 		if ok {
@@ -84,7 +84,7 @@ func (base *BaseController) BuildErrResponse(code, msg string) {
 	response := resp.FailAll(code, msg)
 	base.Data["json"] = response
 	base.ServeJSON()
-	Log.Printf("call BuildErrResponse response:%+v", response)
+	Log.Info("call BuildErrResponse response:%+v", response)
 }
 
 //构建系统异常响应
@@ -98,7 +98,7 @@ func (base *BaseController) BuildSucPagingResponse(result interface{}, paging mo
 	response := resp.SucPage(result, paging)
 	base.Data["json"] = response
 	base.ServeJSON()
-	Log.Printf("call BuildSucResponse url:%+v,response:%+v", base.Ctx.Request.URL, response)
+	Log.Info("call BuildSucResponse url:%+v,response:%+v", base.Ctx.Request.URL, response)
 }
 
 //构建成功响应
@@ -107,5 +107,5 @@ func (base *BaseController) BuildSucResponse(result interface{}) {
 	response := resp.Suc(result)
 	base.Data["json"] = response
 	base.ServeJSON()
-	Log.Printf("call BuildSucResponse url:%+v,response:%+v", base.Ctx.Request.URL, response)
+	Log.Info("call BuildSucResponse url:%+v,response:%+v", base.Ctx.Request.URL, response)
 }

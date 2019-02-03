@@ -102,7 +102,7 @@ func (searchSer searchService) IndexSingle(articles *model.Articles) {
 //索引数据
 func (searchSer searchService) Index(articlesList []*model.Articles) {
 	component.GoRoutine(func() {
-		Log.Printf("call initFullTextSearcher start size:%v", len(articlesList))
+		Log.Info("call initFullTextSearcher start size:%v", len(articlesList))
 		for _, article := range articlesList {
 			tagLen := len(article.Tags)
 			BowenBiz.GetBowen(article)
@@ -114,10 +114,10 @@ func (searchSer searchService) Index(articlesList []*model.Articles) {
 				labels[tagLen+index] = category.CategoryName
 			}
 			content := searchContent{
-				Id:      article.Id,
-				Title:   article.Title,
-				Desc:    article.Desc,
-				Content: article.ArticlesDetails.Content,
+				Id:    article.Id,
+				Title: article.Title,
+				//Desc:    article.Desc,
+				//Content: article.ArticlesDetails.Content,
 			}
 			fullTextSearcher.Index(
 				strconv.Itoa(article.Id),
@@ -134,7 +134,7 @@ func (searchSer searchService) Index(articlesList []*model.Articles) {
 		}
 		fullTextSearcher.Flush()
 		allDocIds := fullTextSearcher.GetAllDocIds()
-		Log.Printf("call initFullTextSearcher end length:%v,allDocIds:%v", len(allDocIds), allDocIds)
+		Log.Info("call initFullTextSearcher end length:%v,allDocIds:%v", len(allDocIds), allDocIds)
 	})
 }
 
@@ -199,7 +199,7 @@ func (ArticlesSearchEngine) Search(search *model.Search) ([]*model.Articles, mod
 	//paging := articles.Paging
 	//return articlesList, paging
 
-	Log.Printf("call ArticlesSearchEngine start search:%v", search.Content)
+	Log.Info("call ArticlesSearchEngine start search:%v", search.Content)
 	paging := search.Paging
 	pageSize, offset := paging.StartPage()
 	searchDoc := fullTextSearcher.SearchDoc(types.SearchReq{
@@ -211,11 +211,11 @@ func (ArticlesSearchEngine) Search(search *model.Search) ([]*model.Articles, mod
 			ScoringCriteria: ArticlesScoringCriteria{},
 		},
 	})
-	Log.Printf("call ArticlesSearchEngine Docs:%v", searchDoc.Docs)
+	Log.Info("call ArticlesSearchEngine Docs:%v", searchDoc.Docs)
 	docLen := len(searchDoc.Docs)
 	articlesList := make([]*model.Articles, docLen)
 	for index, searchDoc := range searchDoc.Docs {
-		Log.Printf("call ArticlesSearchEngine DocId:%v", searchDoc.DocId)
+		Log.Info("call ArticlesSearchEngine DocId:%v", searchDoc.DocId)
 		articles := new(model.Articles)
 		articles.Id, _ = strconv.Atoi(searchDoc.DocId)
 		articles.Status = constant.BOWEN_STATUS_PUBLISH
@@ -223,7 +223,7 @@ func (ArticlesSearchEngine) Search(search *model.Search) ([]*model.Articles, mod
 	}
 	paging.CalPages(int64(searchDoc.NumDocs))
 
-	Log.Printf("call ArticlesSearchEngine end docLength:%v", docLen)
+	Log.Info("call ArticlesSearchEngine end docLength:%v", docLen)
 	return articlesList, paging
 }
 
