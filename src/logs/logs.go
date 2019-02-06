@@ -109,7 +109,7 @@ func (l *logs) logCut(logFile *os.File) {
 	lock.RLock()
 
 	oldFilePath := l.filePath + l.fileName
-	newFilePath := l.filePath + datetime.FormatTime(time.Now(), datetime.FM_DATE) + ".log"
+	newFilePath := l.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
 	Log.Sys("call fileCut oldFilePath:%v,newFilePath:%v", oldFilePath, newFilePath)
 
 	_, err := os.Stat(oldFilePath)
