@@ -114,6 +114,7 @@ func (l *logs) logCut(logFile *os.File) {
 
 	_, err := os.Stat(oldFilePath)
 	if os.IsNotExist(err) {
+		Log.Sys("call fileCut IsNotExist err:%v", err)
 		bizerror.BizError404002.PanicError()
 	}
 
