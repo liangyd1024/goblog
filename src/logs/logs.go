@@ -15,7 +15,9 @@ import (
 	"log"
 	"os"
 	"path"
+	"reflect"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -107,6 +109,12 @@ func (l *logs) logCut(logFile *os.File) {
 	<-tm.C
 
 	lock.RLock()
+
+	defer func() {
+		if err := recover(); err != nil {
+			Log.Sys("call logCut errInfo:%v,err_type:%v,stack:%v", err, reflect.TypeOf(err), string(debug.Stack()))
+		}
+	}()
 
 	oldFilePath := l.filePath + l.fileName
 	newFilePath := l.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
