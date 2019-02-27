@@ -120,18 +120,24 @@ func (l *logs) logCut(logFile *os.File) {
 	newFilePath := l.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
 	Log.Sys("call fileCut oldFilePath:%v,newFilePath:%v", oldFilePath, newFilePath)
 
-	_, err := os.Stat(oldFilePath)
+	fileInfo, err := os.Stat(oldFilePath)
+	fmt.Printf("call os.Stat fileInfo:%v", fileInfo)
 	if os.IsNotExist(err) {
+		fmt.Printf("fmt call fileCut IsNotExist err:%v", err)
 		Log.Sys("call fileCut IsNotExist err:%v", err)
 		bizerror.BizError404002.PanicError()
+	} else {
+		fmt.Printf("call os.Stat else")
 	}
 
 	//关闭日志接收
 	cutChannel <- true
 
 	//关闭老文件
+	fmt.Printf("call logFile.Close()")
 	bizerror.Check(logFile.Close())
 	//重命名
+	fmt.Printf("call logFile.Rename()")
 	bizerror.Check(os.Rename(oldFilePath, newFilePath))
 
 	lock.RUnlock()
