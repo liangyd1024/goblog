@@ -9,14 +9,15 @@ import (
 )
 
 type dbConfig struct {
-	DbUser         string
-	DbPwd          string
-	DbUrls         string
-	DbName         string
-	DbMaxIdleConns int
-	DbMaxConns     int
-	DbForce        bool
-	DbDebug        bool
+	DbUser          string
+	DbPwd           string
+	DbUrls          string
+	DbName          string
+	DbMaxIdleConns  int
+	DbMaxConns      int
+	ConnMaxLifetime int
+	DbForce         bool
+	DbDebug         bool
 }
 
 var (
@@ -46,6 +47,7 @@ func dbConf() {
 	DB.DbName = beego.AppConfig.DefaultString("mysqlDb", "goblog")
 	DB.DbMaxIdleConns = beego.AppConfig.DefaultInt("mysqlMaxIdleConns", 10)
 	DB.DbMaxConns = beego.AppConfig.DefaultInt("mysqlMaxOpenConns", 50)
+	DB.ConnMaxLifetime = beego.AppConfig.DefaultInt("connMaxLifetime", 1800)
 	DB.DbForce = beego.AppConfig.DefaultBool("mysqlForce", false)
 	DB.DbDebug = beego.AppConfig.DefaultBool("mysqlDebug", true)
 	orm.Debug = DB.DbDebug
