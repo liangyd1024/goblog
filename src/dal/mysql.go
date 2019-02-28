@@ -8,6 +8,7 @@ import (
 	. "goblog/src/logs"
 	"goblog/src/model"
 	"goblog/src/utils/bizerror"
+	"time"
 )
 
 const (
@@ -36,6 +37,10 @@ func init() {
 
 	orm.SetMaxIdleConns(AliasName, config.DB.DbMaxIdleConns)
 	orm.SetMaxOpenConns(AliasName, config.DB.DbMaxConns)
+
+	db, err := orm.GetDB(AliasName)
+	bizerror.Check(err)
+	db.SetConnMaxLifetime(time.Duration(time.Second * time.Duration(config.DB.ConnMaxLifetime)))
 
 	err = orm.RunSyncdb(AliasName, config.DB.DbForce, true)
 	bizerror.Check(err)
