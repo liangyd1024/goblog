@@ -114,10 +114,10 @@ func (searchSer searchService) Index(articlesList []*model.Articles) {
 				labels[tagLen+index] = category.CategoryName
 			}
 			content := searchContent{
-				Id:    article.Id,
-				Title: article.Title,
-				//Desc:    article.Desc,
-				//Content: article.ArticlesDetails.Content,
+				Id:      article.Id,
+				Title:   article.Title,
+				Desc:    article.Desc,
+				Content: article.ArticlesDetails.Content,
 			}
 			fullTextSearcher.Index(
 				strconv.Itoa(article.Id),
