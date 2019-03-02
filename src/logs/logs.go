@@ -15,9 +15,7 @@ import (
 	"log"
 	"os"
 	"path"
-	"reflect"
 	"runtime"
-	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -49,6 +47,9 @@ type logs struct {
 }
 
 func InitLogs(cutFlag bool) *logs {
+	if cutFlag {
+		fmt.Printf("call cutFlag Log:%v,cutFlag:%v ", Log, cutFlag)
+	}
 	if Log == nil || cutFlag {
 		lock.Lock()
 		defer lock.Unlock()
@@ -108,13 +109,8 @@ func (l *logs) logCut(logFile *os.File) {
 	//tm := time.NewTimer(time.Duration(time.Second * 20))
 	<-tm.C
 
+	fmt.Printf("call lock.RLock() ")
 	lock.RLock()
-
-	defer func() {
-		if err := recover(); err != nil {
-			Log.Sys("call logCut errInfo:%v,err_type:%v,stack:%v", err, reflect.TypeOf(err), string(debug.Stack()))
-		}
-	}()
 
 	oldFilePath := l.filePath + l.fileName
 	newFilePath := l.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
@@ -123,26 +119,28 @@ func (l *logs) logCut(logFile *os.File) {
 	fileInfo, err := os.Stat(oldFilePath)
 	fmt.Printf("call os.Stat fileInfo:%v", fileInfo)
 	if os.IsNotExist(err) {
-		fmt.Printf("fmt call fileCut IsNotExist err:%v", err)
+		fmt.Printf("fmt call fileCut IsNotExist err:%v ", err)
 		Log.Sys("call fileCut IsNotExist err:%v", err)
 		bizerror.BizError404002.PanicError()
 	} else {
-		fmt.Printf("call os.Stat else")
+		fmt.Printf("call os.Stat else ")
 	}
 
 	//关闭日志接收
 	cutChannel <- true
 
 	//关闭老文件
-	fmt.Printf("call logFile.Close()")
+	fmt.Printf("call logFile.Close() ")
 	bizerror.Check(logFile.Close())
 	//重命名
-	fmt.Printf("call logFile.Rename()")
+	fmt.Printf("call logFile.Rename() ")
 	bizerror.Check(os.Rename(oldFilePath, newFilePath))
 
+	fmt.Printf("call logFile.RUnlock() ")
 	lock.RUnlock()
 
 	//重新初始化
+	fmt.Printf("call logFile.InitLogs()")
 	InitLogs(true)
 }
 
