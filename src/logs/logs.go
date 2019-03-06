@@ -87,7 +87,7 @@ func InitLogs(cutFlag bool) *logs {
 			if Log.async {
 				go async()
 			}
-			go Log.logCut(logFile)
+			//go Log.logCut(logFile)
 		}
 	}
 	return Log
@@ -106,7 +106,7 @@ func (l *logs) logCut(logFile *os.File) {
 	nextDay := time.Date(y, m, d, 0, 0, 0, 0, nowTime.Location())
 	Log.Sys("call fileCut nowTime:%v,nextDay:%v", nowTime, nextDay)
 	tm := time.NewTimer(time.Duration(nextDay.UnixNano() - nowTime.UnixNano() + 100))
-	//tm := time.NewTimer(time.Duration(time.Second * 20))
+	//tm := time.NewTimer(time.Duration(time.Second * 60))
 	<-tm.C
 
 	fmt.Printf("call lock.RLock() ")
@@ -140,7 +140,7 @@ func (l *logs) logCut(logFile *os.File) {
 	lock.RUnlock()
 
 	//重新初始化
-	fmt.Printf("call logFile.InitLogs()")
+	fmt.Printf("call logFile.InitLogs() ")
 	InitLogs(true)
 }
 
@@ -222,6 +222,7 @@ func write(msg string, lockFlag bool, log ...interface{}) {
 func async() {
 	if Log.async {
 		Log.Sys("call async log start")
+		endFlag := false
 		for {
 			select {
 			case msg := <-logChannel:
@@ -229,10 +230,11 @@ func async() {
 				Log.logger.Printf(msg)
 				lock.Unlock()
 			case cutMsg := <-cutChannel:
-				if cutMsg {
-					Log.Sys("call async cutChannel cutMsg:%v", cutMsg)
-					return
-				}
+				endFlag = cutMsg
+			}
+			if endFlag {
+				Log.Sys("call async cutChannel endFlag:%v", endFlag)
+				break
 			}
 		}
 	}
