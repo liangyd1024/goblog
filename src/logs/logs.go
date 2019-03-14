@@ -108,8 +108,8 @@ func logCut(logFile *os.File) {
 	y, m, d := nowTime.Add(24 * time.Hour).Date()
 	nextDay := time.Date(y, m, d, 0, 0, 0, 0, nowTime.Location())
 	Log.Sys("call fileCut nowTime:%v,nextDay:%v", nowTime, nextDay)
-	//tm := time.NewTimer(time.Duration(nextDay.UnixNano() - nowTime.UnixNano() + 100))
-	tm := time.NewTimer(time.Duration(time.Second * 60))
+	tm := time.NewTimer(time.Duration(nextDay.UnixNano() - nowTime.UnixNano() + 100))
+	//tm := time.NewTimer(time.Duration(time.Second * 60))
 	<-tm.C
 
 	fmt.Printf("call lock.RLock() ")
