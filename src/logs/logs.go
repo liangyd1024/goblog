@@ -16,6 +16,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -48,7 +49,7 @@ type logs struct {
 
 func InitLogs(cutFlag bool) *logs {
 	if cutFlag {
-		fmt.Printf("call cutFlag Log:%v,cutFlag:%v ", Log, cutFlag)
+		fmt.Printf("call cutFlag Log:%+v,cutFlag:%v ", Log, cutFlag)
 	}
 	if Log == nil || cutFlag {
 		lock.Lock()
@@ -87,7 +88,7 @@ func InitLogs(cutFlag bool) *logs {
 			if Log.async {
 				go async()
 			}
-			//go Log.logCut(logFile)
+			go logCut(logFile)
 		}
 	}
 	return Log
@@ -100,20 +101,22 @@ func GetLogsWriter() io.Writer {
 	return Log.writer
 }
 
-func (l *logs) logCut(logFile *os.File) {
+func logCut(logFile *os.File) {
+	defer RecoverLog()
+
 	nowTime := time.Now()
 	y, m, d := nowTime.Add(24 * time.Hour).Date()
 	nextDay := time.Date(y, m, d, 0, 0, 0, 0, nowTime.Location())
 	Log.Sys("call fileCut nowTime:%v,nextDay:%v", nowTime, nextDay)
-	tm := time.NewTimer(time.Duration(nextDay.UnixNano() - nowTime.UnixNano() + 100))
-	//tm := time.NewTimer(time.Duration(time.Second * 60))
+	//tm := time.NewTimer(time.Duration(nextDay.UnixNano() - nowTime.UnixNano() + 100))
+	tm := time.NewTimer(time.Duration(time.Second * 60))
 	<-tm.C
 
 	fmt.Printf("call lock.RLock() ")
 	lock.RLock()
 
-	oldFilePath := l.filePath + l.fileName
-	newFilePath := l.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
+	oldFilePath := Log.filePath + Log.fileName
+	newFilePath := Log.filePath + datetime.FormatTime(nowTime, datetime.FM_DATE) + ".log"
 	Log.Sys("call fileCut oldFilePath:%v,newFilePath:%v", oldFilePath, newFilePath)
 
 	fileInfo, err := os.Stat(oldFilePath)
@@ -144,8 +147,8 @@ func (l *logs) logCut(logFile *os.File) {
 	InitLogs(true)
 }
 
-func formatLog(level int) (msg string) {
-	_, file, line, ok := runtime.Caller(2)
+func formatLog(level, skip int) (msg string) {
+	_, file, line, ok := runtime.Caller(skip)
 	if !ok {
 		return
 	}
@@ -172,35 +175,35 @@ func (l *logs) Debug(format string, log ...interface{}) {
 	if l.logLevel > DEBUG {
 		return
 	}
-	write(formatLog(DEBUG)+format, true, log...)
+	write(formatLog(DEBUG, 2)+format, true, log...)
 }
 
 func (l *logs) Info(format string, log ...interface{}) {
 	if l.logLevel > INFO {
 		return
 	}
-	write(formatLog(INFO)+format, true, log...)
+	write(formatLog(INFO, 2)+format, true, log...)
 }
 
 func (l *logs) Warn(format string, log ...interface{}) {
 	if l.logLevel > WARN {
 		return
 	}
-	write(formatLog(WARN)+format, true, log...)
+	write(formatLog(WARN, 2)+format, true, log...)
 }
 
 func (l *logs) Error(format string, log ...interface{}) {
 	if l.logLevel > ERROR {
 		return
 	}
-	write(formatLog(ERROR)+format, true, log...)
+	write(formatLog(ERROR, 2)+format, true, log...)
 }
 
 func (l *logs) Sys(format string, log ...interface{}) {
 	if l.logLevel > SYS {
 		return
 	}
-	write(formatLog(SYS)+format, false, log...)
+	write(formatLog(SYS, 2)+format, false, log...)
 }
 
 func write(msg string, lockFlag bool, log ...interface{}) {
@@ -220,6 +223,7 @@ func write(msg string, lockFlag bool, log ...interface{}) {
 
 //异步输出日志
 func async() {
+	defer RecoverLog()
 	if Log.async {
 		Log.Sys("call async log start")
 		endFlag := false
@@ -237,5 +241,11 @@ func async() {
 				break
 			}
 		}
+	}
+}
+
+func RecoverLog() {
+	if err := recover(); err != nil {
+		write(formatLog(ERROR, 1)+"call RecoverLog err:%v,stack:%v", false, err, string(debug.Stack()))
 	}
 }

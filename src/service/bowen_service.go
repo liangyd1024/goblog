@@ -117,7 +117,7 @@ func (bowenSer bowenService) ModifyArticles(articles *model.Articles) {
 	bowenMapper.Modify(queryArticles)
 
 	//更新博文索引
-	//SearchBiz.IndexSingle(queryArticles)
+	SearchBiz.IndexSingle(queryArticles)
 }
 
 func (bowenSer bowenService) DeleteArticles(articles *model.Articles) {
