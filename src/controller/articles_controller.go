@@ -53,7 +53,7 @@ func (articlesController *ArticlesController) ListArticles() {
 func (articlesController *ArticlesController) ListRecommendArticles() {
 	defer articlesController.PanicHandler()
 
-	articlesController.BuildSucResponse(service.BowenBiz.ListRecommendBowen(3))
+	articlesController.BuildSucResponse(service.BowenBiz.ListRecommendBowen(5))
 }
 
 // @router /articles/tag/list [get]
