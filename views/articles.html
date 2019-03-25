@@ -18,15 +18,15 @@
     <article class="post post-1" v-for="(articles,index) in articlesList" @touchmove="touchMore(index)">
         <header class="entry-header">
             <h1 class="entry-title">
-                <a href="#">{{articles.title}}</a>
+                <a v-bind:href="todetails(articles.id)">{{articles.title}}</a>
             </h1>
             <div class="entry-meta">
-                <span class="post-category"><a href="#">{{types[articles.type]}}</a></span>
-                <span class="post-date"><a href="#">{{dateFormat(articles.publishTime,true)}}</a></span>
-                <span class="post-author"><a href="#">{{articles.publisher}}</a></span>
-                <span class="comments-link"><a href="#">{{articles.commentNum}} 评论</a></span>
-                <span class="views-count"><a href="#">{{articles.browseNum}} 阅读</a></span>
-                <span class="views-count"><a href="#">{{articles.praiseNum}} 点赞</a></span>
+                <span class="post-category"><a href="javascript:void(0)">{{types[articles.type]}}</a></span>
+                <span class="post-date"><a href="javascript:void(0)">{{dateFormat(articles.publishTime,false)}}</a></span>
+                <span class="post-author"><a href="javascript:void(0)">{{articles.publisher}}</a></span>
+                <span class="comments-link"><a href="javascript:void(0)">{{articles.commentNum}} 评论</a></span>
+                <span class="comments-link"><a href="javascript:void(0)">{{articles.browseNum}} 阅读</a></span>
+                <span class="views-count"><a href="javascript:void(0)">{{articles.praiseNum}} 点赞</a></span>
             </div>
         </header>
         <div class="entry-content clearfix">
@@ -34,10 +34,10 @@
             <div class="clearfix"></div>
         <div class="entry-meta">
         <div class="pull-left" v-if="articles.categorys.length>0">
-            【分类】<span class="post-category" v-for="category in articles.categorys"><a href="#">{{category.categoryName}}</a></span>
+            【分类】<span class="post-category" v-for="category in articles.categorys"><a href="javascript:void(0)">{{category.categoryName}}</a></span>
         </div>
         <div class="pull-left" v-if="articles.tags.length>0">
-            【标签】<span class="post-category" v-for="tag in articles.tags"><a href="#">{{tag.tagName}}</a></span>
+            【标签】<span class="post-category" v-for="tag in articles.tags"><a href="javascript:void(0)">{{tag.tagName}}</a></span>
         </div>
         </div>
             <div class="read-more cl-effect-14">
