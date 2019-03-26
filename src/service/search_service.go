@@ -6,7 +6,6 @@
 package service
 
 import (
-	"encoding/gob"
 	"github.com/go-ego/riot"
 	"github.com/go-ego/riot/types"
 	"goblog/src/component"
@@ -50,18 +49,18 @@ func init() {
 	//归档搜索
 	engineType[PLACE_OF_FILE] = PlaceOfFileSearchEngine{}
 
-	component.GoRoutine(func() {
-		gob.Register(ArticlesScoringFields{})
-		fullTextSearcher.Init(types.EngineOpts{
-			Using:       3,
-			GseDict:     "zh",
-			UseStore:    true,
-			StoreFolder: "./indexer",
-			StoreShards: 8,
-			StoreEngine: "",
-		})
-		fullTextSearcher.Flush()
-	})
+	//component.GoRoutine(func() {
+	//	gob.Register(ArticlesScoringFields{})
+	//	fullTextSearcher.Init(types.EngineOpts{
+	//		Using:       3,
+	//		GseDict:     "zh",
+	//		UseStore:    true,
+	//		StoreFolder: "./indexer",
+	//		StoreShards: 8,
+	//		StoreEngine: "",
+	//	})
+	//	fullTextSearcher.Flush()
+	//})
 
 }
 
@@ -96,7 +95,7 @@ func (searchSer searchService) GetSearchEngine(search *model.Search) SearchEngin
 }
 
 func (searchSer searchService) IndexSingle(articles *model.Articles) {
-	searchSer.Index([]*model.Articles{articles})
+	//searchSer.Index([]*model.Articles{articles})
 }
 
 //索引数据
@@ -194,37 +193,37 @@ type ArticlesSearchEngine struct {
 
 //全文检索
 func (ArticlesSearchEngine) Search(search *model.Search) ([]*model.Articles, model.Paging) {
-	//articles := &model.Articles{Title: search.Content, Desc: search.Content, Paging: search.Paging}
-	//articlesList := BowenBiz.GetBowenCondition(articles)
-	//paging := articles.Paging
-	//return articlesList, paging
-
 	Log.Info("call ArticlesSearchEngine start search:%v", search.Content)
-	paging := search.Paging
-	pageSize, offset := paging.StartPage()
-	searchDoc := fullTextSearcher.SearchDoc(types.SearchReq{
-		Text: search.Content,
-		//Labels: []string{search.Content},
-		RankOpts: &types.RankOpts{
-			OutputOffset:    offset,
-			MaxOutputs:      pageSize,
-			ScoringCriteria: ArticlesScoringCriteria{},
-		},
-	})
-	Log.Info("call ArticlesSearchEngine Docs:%v", searchDoc.Docs)
-	docLen := len(searchDoc.Docs)
-	articlesList := make([]*model.Articles, docLen)
-	for index, searchDoc := range searchDoc.Docs {
-		Log.Info("call ArticlesSearchEngine DocId:%v", searchDoc.DocId)
-		articles := new(model.Articles)
-		articles.Id, _ = strconv.Atoi(searchDoc.DocId)
-		articles.Status = constant.BOWEN_STATUS_PUBLISH
-		articlesList[index] = BowenBiz.GetBowenCondition(articles)[0]
-	}
-	paging.CalPages(int64(searchDoc.NumDocs))
-
-	Log.Info("call ArticlesSearchEngine end docLength:%v", docLen)
+	articles := &model.Articles{Title: search.Content, Desc: search.Content, Paging: search.Paging}
+	articlesList := BowenBiz.GetBowenCondition(articles)
+	paging := articles.Paging
 	return articlesList, paging
+
+	//paging := search.Paging
+	//pageSize, offset := paging.StartPage()
+	//searchDoc := fullTextSearcher.SearchDoc(types.SearchReq{
+	//	Text: search.Content,
+	//	//Labels: []string{search.Content},
+	//	RankOpts: &types.RankOpts{
+	//		OutputOffset:    offset,
+	//		MaxOutputs:      pageSize,
+	//		ScoringCriteria: ArticlesScoringCriteria{},
+	//	},
+	//})
+	//Log.Info("call ArticlesSearchEngine Docs:%v", searchDoc.Docs)
+	//docLen := len(searchDoc.Docs)
+	//articlesList := make([]*model.Articles, docLen)
+	//for index, searchDoc := range searchDoc.Docs {
+	//	Log.Info("call ArticlesSearchEngine DocId:%v", searchDoc.DocId)
+	//	articles := new(model.Articles)
+	//	articles.Id, _ = strconv.Atoi(searchDoc.DocId)
+	//	articles.Status = constant.BOWEN_STATUS_PUBLISH
+	//	articlesList[index] = BowenBiz.GetBowenCondition(articles)[0]
+	//}
+	//paging.CalPages(int64(searchDoc.NumDocs))
+	//
+	//Log.Info("call ArticlesSearchEngine end docLength:%v", docLen)
+	//return articlesList, paging
 }
 
 type PlaceOfFileSearchEngine struct {
