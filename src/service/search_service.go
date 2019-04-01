@@ -139,10 +139,10 @@ func (searchSer searchService) Index(articlesList []*model.Articles) {
 
 //删除索引数据
 func (searchSer searchService) RemoveIndex(articles *model.Articles) {
-	component.GoRoutine(func() {
-		fullTextSearcher.RemoveDoc(strconv.Itoa(articles.Id), true)
-		fullTextSearcher.Flush()
-	})
+	//component.GoRoutine(func() {
+	//	fullTextSearcher.RemoveDoc(strconv.Itoa(articles.Id), true)
+	//	fullTextSearcher.Flush()
+	//})
 }
 
 type ArticlesScoringFields struct {
