@@ -180,7 +180,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li v-for="category in categorys">
-                                        <span @click.self="selectcategory(category,true)">
+                                        <span @click="selectcategory(category,true)">
                                             <a>{{category.categoryName}}</a>
                                             <a class="pull-right" @click.stop="deletecategory(category)">删除</a>
                                         </span>
