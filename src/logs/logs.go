@@ -66,6 +66,8 @@ func InitLogs(cutFlag bool) *logs {
 			Log.logLevel = cfg.DefaultInt("logLevel", 1)
 			Log.async = cfg.DefaultBool("async", true)
 
+			fmt.Printf("call cutFlag newLog:%+v ", Log)
+
 			_, err = os.Stat(Log.filePath)
 			if os.IsNotExist(err) {
 				err := os.MkdirAll(Log.filePath, 0766)
@@ -246,6 +248,7 @@ func async() {
 
 func RecoverLog() {
 	if err := recover(); err != nil {
+		fmt.Printf(" Printf call RecoverLog err:%v,stack:%v", err, string(debug.Stack()))
 		write(formatLog(ERROR, 1)+"call RecoverLog err:%v,stack:%v", false, err, string(debug.Stack()))
 	}
 }
