@@ -1,4 +1,9 @@
 var baseMixins = {
+
+    data: {
+        isMobile: !!isMobile()
+    },
+
     methods: {
 
         //时间格式化函数，此处仅针对yyyy-MM-dd hh:mm:ss 的格式进行格式化
@@ -138,5 +143,11 @@ function getWindowHeight() {
         windowHeight = document.body.clientHeight;
     }
     return windowHeight;
+}
+
+//是否移动端
+function isMobile() {
+    let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+    return flag;
 }
 

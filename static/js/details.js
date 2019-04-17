@@ -222,6 +222,7 @@ function initMarkdown() {
         flowChart: true,  // 默认不解析
         sequenceDiagram: true,  // 默认不解析
         tocm: true,         // Using [TOCM]
+        // tocContainer    : "#custom-toc-container"
     });
     console.log("======initMarkdown=======");
 }

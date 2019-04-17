@@ -120,18 +120,12 @@
                     </section>
                 </main>
 
+
                 <!--
-                <div id="toc" class="col-md-4" >
-                    <div class="widget widget-content">
+                <div id="sidebar" class="col-md-4" >
+                    <div class="widget-content">
                         <h3 class="widget-title">文章目录</h3>
-                        <ul>
-                            <li>
-                                <a href="#">教程特点</a>
-                            </li>
-                            <li>
-                                <a href="#">谁适合这个教程</a>
-                            </li>
-                        </ul>
+                        <div class="markdown-body editormd-preview-container" id="custom-toc-container">#custom-toc-container</div>
                     </div>
                 </div>
                 -->
@@ -143,8 +137,13 @@
     </div>
 
     <div>
+        <!--
+        <div class="fc catalog">
+            <a href="javascript:void(0)" @click="catalog()">目录</a>
+        </div>
+        -->
         <div @click="praise()" id="praise" class="fc praise">
-            <span title="点赞" class="font-noraml col-sm-4"><i class="fa fa-thumbs-up"></i> </span>
+            <a href="javascript:void(0)" title="点赞" class="font-noraml col-sm-4"><i class="fa fa-thumbs-up"></i> </a>
         </div>
         <div class="fc top">
             <a href="#top">top</a>
