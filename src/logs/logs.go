@@ -59,7 +59,9 @@ func InitLogs(cutFlag bool) *logs {
 			currentPath, err := os.Getwd()
 			bizerror.Check(err)
 
-			Log = new(logs)
+			if !cutFlag {
+				Log = new(logs)
+			}
 			Log.consoleMode = cfg.DefaultBool("consoleMode", true)
 			Log.fileMode = cfg.DefaultBool("fileMode", true)
 			Log.filePath = cfg.DefaultString("filePath", currentPath+"/log/")
